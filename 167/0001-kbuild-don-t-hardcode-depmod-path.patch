@@ -1,0 +1,33 @@
+From e772e308a642b92568c2e9df41c4cd21fa8a49de Mon Sep 17 00:00:00 2001
+From: Dominique Martinet <asmadeus@codewreck.org>
+Date: Tue, 1 Dec 2020 14:17:30 +0100
+Subject: [PATCH 01/76] kbuild: don't hardcode depmod path
+
+commit 436e980e2ed526832de822cbf13c317a458b78e1 upstream.
+
+depmod is not guaranteed to be in /sbin, just let make look for
+it in the path like all the other invoked programs
+
+Signed-off-by: Dominique Martinet <asmadeus@codewreck.org>
+Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Makefile b/Makefile
+index 0bca3e135..cba8f8a06 100644
+--- a/Makefile
++++ b/Makefile
+@@ -385,7 +385,7 @@ YACC		= bison
+ AWK		= awk
+ GENKSYMS	= scripts/genksyms/genksyms
+ INSTALLKERNEL  := installkernel
+-DEPMOD		= /sbin/depmod
++DEPMOD		= depmod
+ PERL		= perl
+ PYTHON		= python
+ PYTHON2		= python2
+-- 
+2.43.0
+

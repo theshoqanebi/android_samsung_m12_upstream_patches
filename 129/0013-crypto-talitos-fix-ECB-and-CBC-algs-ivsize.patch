@@ -1,0 +1,41 @@
+From b0d9ca13765ef05b6cdd691f9892008eaf6a638d Mon Sep 17 00:00:00 2001
+From: Su Kang Yin <cantona@cantona.net>
+Date: Thu, 11 Jun 2020 19:50:47 +0800
+Subject: [PATCH 013/264] crypto: talitos - fix ECB and CBC algs ivsize
+
+commit e1de42fdfc6a ("crypto: talitos - fix ECB algs ivsize")
+wrongly modified CBC algs ivsize instead of ECB aggs ivsize.
+
+This restore the CBC algs original ivsize of removes ECB's ones.
+
+Fixes: e1de42fdfc6a ("crypto: talitos - fix ECB algs ivsize")
+Signed-off-by: Su Kang Yin <cantona@cantona.net>
+Reviewed-by: Christophe Leroy <christophe.leroy@csgroup.eu>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ drivers/crypto/talitos.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/crypto/talitos.c b/drivers/crypto/talitos.c
+index db5f939f5..ea16308fa 100644
+--- a/drivers/crypto/talitos.c
++++ b/drivers/crypto/talitos.c
+@@ -2670,7 +2670,6 @@ static struct talitos_alg_template driver_algs[] = {
+ 			.cra_ablkcipher = {
+ 				.min_keysize = AES_MIN_KEY_SIZE,
+ 				.max_keysize = AES_MAX_KEY_SIZE,
+-				.ivsize = AES_BLOCK_SIZE,
+ 			}
+ 		},
+ 		.desc_hdr_template = DESC_HDR_TYPE_COMMON_NONSNOOP_NO_AFEU |
+@@ -2704,6 +2703,7 @@ static struct talitos_alg_template driver_algs[] = {
+ 			.cra_ablkcipher = {
+ 				.min_keysize = AES_MIN_KEY_SIZE,
+ 				.max_keysize = AES_MAX_KEY_SIZE,
++				.ivsize = AES_BLOCK_SIZE,
+ 				.setkey = ablkcipher_aes_setkey,
+ 			}
+ 		},
+-- 
+2.43.0
+

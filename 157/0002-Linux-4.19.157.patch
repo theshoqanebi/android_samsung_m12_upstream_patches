@@ -1,0 +1,26 @@
+From b563e631637b942c0a81774c2f3a8528ba289507 Mon Sep 17 00:00:00 2001
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Date: Tue, 10 Nov 2020 21:11:27 +0100
+Subject: [PATCH 2/2] Linux 4.19.157
+
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Makefile b/Makefile
+index 37574ea91..10bbdfe42 100644
+--- a/Makefile
++++ b/Makefile
+@@ -1,7 +1,7 @@
+ # SPDX-License-Identifier: GPL-2.0
+ VERSION = 4
+ PATCHLEVEL = 19
+-SUBLEVEL = 156
++SUBLEVEL = 157
+ EXTRAVERSION =
+ NAME = "People's Front"
+ 
+-- 
+2.43.0
+

@@ -1,0 +1,25 @@
+From 09499e7ebd0bf7ff48d6f7a200b3a2967a9ae34f Mon Sep 17 00:00:00 2001
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Date: Sun, 10 May 2020 10:30:13 +0200
+Subject: [PATCH 33/33] Linux 4.19.122
+
+---
+ Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Makefile b/Makefile
+index f917c08a7..b9ec0d15a 100644
+--- a/Makefile
++++ b/Makefile
+@@ -1,7 +1,7 @@
+ # SPDX-License-Identifier: GPL-2.0
+ VERSION = 4
+ PATCHLEVEL = 19
+-SUBLEVEL = 121
++SUBLEVEL = 122
+ EXTRAVERSION =
+ NAME = "People's Front"
+ 
+-- 
+2.43.0
+

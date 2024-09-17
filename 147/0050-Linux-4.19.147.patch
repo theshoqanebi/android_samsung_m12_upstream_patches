@@ -1,0 +1,30 @@
+From 64a04fd214875a4d1bdc83b40559f36f0b87a1c9 Mon Sep 17 00:00:00 2001
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Date: Wed, 23 Sep 2020 12:11:02 +0200
+Subject: [PATCH 50/50] Linux 4.19.147
+
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
+Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
+Tested-by: Guenter Roeck <linux@roeck-us.net>
+Link: https://lore.kernel.org/lkml/20200921162034.660953761@linuxfoundation.org/
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Makefile b/Makefile
+index bf1b13f01..9b9e493a4 100644
+--- a/Makefile
++++ b/Makefile
+@@ -1,7 +1,7 @@
+ # SPDX-License-Identifier: GPL-2.0
+ VERSION = 4
+ PATCHLEVEL = 19
+-SUBLEVEL = 146
++SUBLEVEL = 147
+ EXTRAVERSION =
+ NAME = "People's Front"
+ 
+-- 
+2.43.0
+

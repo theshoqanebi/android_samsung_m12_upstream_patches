@@ -1,0 +1,52 @@
+From 61925dc54cf1ca1b47359beb23829dbaacf7fb4e Mon Sep 17 00:00:00 2001
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Thu, 26 Mar 2020 14:57:18 +0900
+Subject: [PATCH 30/36] kbuild: remove AS variable
+
+commit aa824e0c962b532d5073cbb41b2efcd6f5e72bae upstream.
+
+As commit 5ef872636ca7 ("kbuild: get rid of misleading $(AS) from
+documents") noted, we rarely use $(AS) directly in the kernel build.
+
+Now that the only/last user of $(AS) in drivers/net/wan/Makefile was
+converted to $(CC), $(AS) is no longer used in the build process.
+
+You can still pass in AS=clang, which is just a switch to turn on
+the LLVM integrated assembler.
+
+Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
+Tested-by: Nick Desaulniers <ndesaulniers@google.com>
+Reviewed-by: Nathan Chancellor <natechancellor@gmail.com>
+Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
+[nd: conflict in exported vars list from not backporting commit
+ e83b9f55448a ("kbuild: add ability to generate BTF type info for vmlinux")]
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ Makefile | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/Makefile b/Makefile
+index 8f56eb7be..ebe327143 100644
+--- a/Makefile
++++ b/Makefile
+@@ -370,7 +370,6 @@ KBUILD_HOSTLDFLAGS  := $(HOST_LFS_LDFLAGS) $(HOSTLDFLAGS)
+ KBUILD_HOSTLDLIBS   := $(HOST_LFS_LIBS) $(HOSTLDLIBS)
+ 
+ # Make variables (CC, etc...)
+-AS		= $(CROSS_COMPILE)as
+ LD		= $(CROSS_COMPILE)ld
+ CC              = $(srctree)/toolchain/clang/host/linux-x86/clang-r353983c/bin/clang
+ CPP		= $(CC) -E
+@@ -443,7 +442,7 @@ KBUILD_LDFLAGS :=
+ GCC_PLUGINS_CFLAGS :=
+ CLANG_FLAGS :=
+ 
+-export ARCH SRCARCH CONFIG_SHELL HOSTCC KBUILD_HOSTCFLAGS CROSS_COMPILE AS LD CC
++export ARCH SRCARCH CONFIG_SHELL HOSTCC KBUILD_HOSTCFLAGS CROSS_COMPILE LD CC
+ export CPP AR NM STRIP OBJCOPY OBJDUMP OBJSIZE READELF KBUILD_HOSTLDFLAGS KBUILD_HOSTLDLIBS
+ export MAKE LEX YACC AWK GENKSYMS INSTALLKERNEL PERL PYTHON PYTHON2 PYTHON3 UTS_MACHINE
+ export HOSTCXX KBUILD_HOSTCXXFLAGS LDFLAGS_MODULE CHECK CHECKFLAGS
+-- 
+2.43.0
+

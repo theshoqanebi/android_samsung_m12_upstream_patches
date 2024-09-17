@@ -1,0 +1,43 @@
+From 1c7c09479d68009cbef2cab8466ab8662c5e12f7 Mon Sep 17 00:00:00 2001
+From: Zhang Qilong <zhangqilong3@huawei.com>
+Date: Tue, 17 Nov 2020 10:16:28 +0800
+Subject: [PATCH 48/55] usb: gadget: f_midi: Fix memleak in f_midi_alloc
+
+commit e7694cb6998379341fd9bf3bd62b48c4e6a79385 upstream.
+
+In the error path, if midi is not null, we should
+free the midi->id if necessary to prevent memleak.
+
+Fixes: b85e9de9e818d ("usb: gadget: f_midi: convert to new function interface with backward compatibility")
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: Zhang Qilong <zhangqilong3@huawei.com>
+Link: https://lore.kernel.org/r/20201117021629.1470544-2-zhangqilong3@huawei.com
+Cc: stable <stable@vger.kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ fs/efivarfs/inode.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/fs/efivarfs/inode.c b/fs/efivarfs/inode.c
+index 8c6ab6c95..7f40343b3 100644
+--- a/fs/efivarfs/inode.c
++++ b/fs/efivarfs/inode.c
+@@ -10,6 +10,7 @@
+ #include <linux/efi.h>
+ #include <linux/fs.h>
+ #include <linux/ctype.h>
++#include <linux/kmemleak.h>
+ #include <linux/slab.h>
+ #include <linux/uuid.h>
+ 
+@@ -106,6 +107,7 @@ static int efivarfs_create(struct inode *dir, struct dentry *dentry,
+ 	var->var.VariableName[i] = '\0';
+ 
+ 	inode->i_private = var;
++	kmemleak_ignore(var);
+ 
+ 	err = efivar_entry_add(var, &efivarfs_list);
+ 	if (err)
+-- 
+2.43.0
+

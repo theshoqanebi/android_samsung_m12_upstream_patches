@@ -1,0 +1,32 @@
+From b8cd86ef64ab21e186d0207e379db38c660d40c1 Mon Sep 17 00:00:00 2001
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Date: Tue, 10 Nov 2020 12:36:02 +0100
+Subject: [PATCH 71/71] Linux 4.19.156
+
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
+Tested-by: Pavel Machek (CIP) <pavel@denx.de>
+Tested-by: Guenter Roeck <linux@roeck-us.net>
+Tested-by: Shuah Khan <skhan@linuxfoundation.org>
+Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
+Link: https://lore.kernel.org/r/20201109125019.906191744@linuxfoundation.org
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Makefile b/Makefile
+index 7efa66d81..37574ea91 100644
+--- a/Makefile
++++ b/Makefile
+@@ -1,7 +1,7 @@
+ # SPDX-License-Identifier: GPL-2.0
+ VERSION = 4
+ PATCHLEVEL = 19
+-SUBLEVEL = 155
++SUBLEVEL = 156
+ EXTRAVERSION =
+ NAME = "People's Front"
+ 
+-- 
+2.43.0
+

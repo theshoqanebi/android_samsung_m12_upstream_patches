@@ -1,0 +1,43 @@
+From 88266115e01a98f3cdb2ae633d6e4a88e5453fc2 Mon Sep 17 00:00:00 2001
+From: Julien Thierry <jthierry@redhat.com>
+Date: Fri, 27 Mar 2020 15:28:41 +0000
+Subject: [PATCH 096/264] objtool: Ignore empty alternatives
+
+[ Upstream commit 7170cf47d16f1ba29eca07fd818870b7af0a93a5 ]
+
+The .alternatives section can contain entries with no original
+instructions. Objtool will currently crash when handling such an entry.
+
+Just skip that entry, but still give a warning to discourage useless
+entries.
+
+Signed-off-by: Julien Thierry <jthierry@redhat.com>
+Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Reviewed-by: Miroslav Benes <mbenes@suse.cz>
+Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ tools/objtool/check.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/tools/objtool/check.c b/tools/objtool/check.c
+index 4d509734b..fd3071d83 100644
+--- a/tools/objtool/check.c
++++ b/tools/objtool/check.c
+@@ -801,6 +801,12 @@ static int add_special_section_alts(struct objtool_file *file)
+ 		}
+ 
+ 		if (special_alt->group) {
++			if (!special_alt->orig_len) {
++				WARN_FUNC("empty alternative entry",
++					  orig_insn->sec, orig_insn->offset);
++				continue;
++			}
++
+ 			ret = handle_group_alt(file, special_alt, orig_insn,
+ 					       &new_insn);
+ 			if (ret)
+-- 
+2.43.0
+

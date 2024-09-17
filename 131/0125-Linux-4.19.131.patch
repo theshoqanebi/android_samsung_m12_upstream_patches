@@ -1,0 +1,26 @@
+From aa80222aa74b335756f907a4e939f4c823d4714e Mon Sep 17 00:00:00 2001
+From: Sasha Levin <sashal@kernel.org>
+Date: Tue, 30 Jun 2020 23:20:17 -0400
+Subject: [PATCH 125/125] Linux 4.19.131
+
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Makefile b/Makefile
+index 7a11533b0..f3969e600 100644
+--- a/Makefile
++++ b/Makefile
+@@ -1,7 +1,7 @@
+ # SPDX-License-Identifier: GPL-2.0
+ VERSION = 4
+ PATCHLEVEL = 19
+-SUBLEVEL = 130
++SUBLEVEL = 131
+ EXTRAVERSION =
+ NAME = "People's Front"
+ 
+-- 
+2.43.0
+

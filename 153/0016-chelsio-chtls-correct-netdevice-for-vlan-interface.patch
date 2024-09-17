@@ -1,0 +1,35 @@
+From 1b9715c7f54dd19f65b0f7ec9e98d7174a5ad74b Mon Sep 17 00:00:00 2001
+From: Vinay Kumar Yadav <vinay.yadav@chelsio.com>
+Date: Mon, 19 Oct 2020 17:20:21 +0530
+Subject: [PATCH 016/140] chelsio/chtls: correct netdevice for vlan interface
+
+[ Upstream commit 81519d1f7df7ed1bd5b1397540c8884438f57ae2 ]
+
+Check if netdevice is a vlan interface and find real vlan netdevice.
+
+Fixes: cc35c88ae4db ("crypto : chtls - CPL handler definition")
+Signed-off-by: Venkatesh Ellapu <venkatesh.e@chelsio.com>
+Signed-off-by: Vinay Kumar Yadav <vinay.yadav@chelsio.com>
+Signed-off-by: Jakub Kicinski <kuba@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ drivers/crypto/chelsio/chtls/chtls_cm.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/drivers/crypto/chelsio/chtls/chtls_cm.c b/drivers/crypto/chelsio/chtls/chtls_cm.c
+index 28d24118c..f1ca66147 100644
+--- a/drivers/crypto/chelsio/chtls/chtls_cm.c
++++ b/drivers/crypto/chelsio/chtls/chtls_cm.c
+@@ -1057,6 +1057,9 @@ static struct sock *chtls_recv_sock(struct sock *lsk,
+ 	ndev = n->dev;
+ 	if (!ndev)
+ 		goto free_dst;
++	if (is_vlan_dev(ndev))
++		ndev = vlan_dev_real_dev(ndev);
++
+ 	port_id = cxgb4_port_idx(ndev);
+ 
+ 	csk = chtls_sock_create(cdev);
+-- 
+2.43.0
+

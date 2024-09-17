@@ -1,0 +1,37 @@
+From c5a834517384f0f288d8e6fa8a89042baa059b56 Mon Sep 17 00:00:00 2001
+From: David Howells <dhowells@redhat.com>
+Date: Fri, 12 Jun 2020 00:15:13 +0100
+Subject: [PATCH 163/206] afs: Fix non-setting of mtime when writing into mmap
+
+[ Upstream commit bb413489288e4e457353bac513fddb6330d245ca ]
+
+The mtime on an inode needs to be updated when a write is made into an
+mmap'ed section.  There are three ways in which this could be done: update
+it when page_mkwrite is called, update it when a page is changed from dirty
+to writeback or leave it to the server and fix the mtime up from the reply
+to the StoreData RPC.
+
+Found with the generic/215 xfstest.
+
+Fixes: 1cf7a1518aef ("afs: Implement shared-writeable mmap")
+Signed-off-by: David Howells <dhowells@redhat.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ fs/afs/write.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/fs/afs/write.c b/fs/afs/write.c
+index e00461a6d..53f329f61 100644
+--- a/fs/afs/write.c
++++ b/fs/afs/write.c
+@@ -792,6 +792,7 @@ vm_fault_t afs_page_mkwrite(struct vm_fault *vmf)
+ 			     vmf->page->index, priv);
+ 	SetPagePrivate(vmf->page);
+ 	set_page_private(vmf->page, priv);
++	file_update_time(file);
+ 
+ 	sb_end_pagefault(inode->i_sb);
+ 	return VM_FAULT_LOCKED;
+-- 
+2.43.0
+

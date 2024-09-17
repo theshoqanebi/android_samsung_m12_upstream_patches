@@ -1,0 +1,40 @@
+From 61a5a97bb948194514c8f628b97b83a789141433 Mon Sep 17 00:00:00 2001
+From: Matteo Croce <mcroce@microsoft.com>
+Date: Fri, 15 Jan 2021 19:42:09 +0100
+Subject: [PATCH 53/57] ipv6: set multicast flag on the multicast route
+
+commit ceed9038b2783d14e0422bdc6fd04f70580efb4c upstream.
+
+The multicast route ff00::/8 is created with type RTN_UNICAST:
+
+  $ ip -6 -d route
+  unicast ::1 dev lo proto kernel scope global metric 256 pref medium
+  unicast fe80::/64 dev eth0 proto kernel scope global metric 256 pref medium
+  unicast ff00::/8 dev eth0 proto kernel scope global metric 256 pref medium
+
+Set the type to RTN_MULTICAST which is more appropriate.
+
+Fixes: e8478e80e5a7 ("net/ipv6: Save route type in rt6_info")
+Signed-off-by: Matteo Croce <mcroce@microsoft.com>
+Signed-off-by: Jakub Kicinski <kuba@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ net/ipv6/addrconf.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/net/ipv6/addrconf.c b/net/ipv6/addrconf.c
+index 4600dc00e..0f2f16705 100644
+--- a/net/ipv6/addrconf.c
++++ b/net/ipv6/addrconf.c
+@@ -2417,7 +2417,7 @@ static void addrconf_add_mroute(struct net_device *dev)
+ 		.fc_ifindex = dev->ifindex,
+ 		.fc_dst_len = 8,
+ 		.fc_flags = RTF_UP,
+-		.fc_type = RTN_UNICAST,
++		.fc_type = RTN_MULTICAST,
+ 		.fc_nlinfo.nl_net = dev_net(dev),
+ 		.fc_protocol = RTPROT_KERNEL,
+ 	};
+-- 
+2.43.0
+

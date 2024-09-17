@@ -1,0 +1,53 @@
+From 5026a792c963cb49ac65bead13bc9523d83b6bd4 Mon Sep 17 00:00:00 2001
+From: Ilya Leoshkevich <iii@linux.ibm.com>
+Date: Wed, 9 Sep 2020 14:27:25 +0200
+Subject: [PATCH 204/240] s390/init: add missing __init annotations
+
+[ Upstream commit fcb2b70cdb194157678fb1a75f9ff499aeba3d2a ]
+
+Add __init to reserve_memory_end, reserve_oldmem and remove_oldmem.
+Sometimes these functions are not inlined, and then the build
+complains about section mismatch.
+
+Signed-off-by: Ilya Leoshkevich <iii@linux.ibm.com>
+Signed-off-by: Heiko Carstens <hca@linux.ibm.com>
+Signed-off-by: Vasily Gorbik <gor@linux.ibm.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ arch/s390/kernel/setup.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/arch/s390/kernel/setup.c b/arch/s390/kernel/setup.c
+index 5f85e0dfa..4bda9055d 100644
+--- a/arch/s390/kernel/setup.c
++++ b/arch/s390/kernel/setup.c
+@@ -537,7 +537,7 @@ static struct notifier_block kdump_mem_nb = {
+ /*
+  * Make sure that the area behind memory_end is protected
+  */
+-static void reserve_memory_end(void)
++static void __init reserve_memory_end(void)
+ {
+ #ifdef CONFIG_CRASH_DUMP
+ 	if (ipl_info.type == IPL_TYPE_FCP_DUMP &&
+@@ -555,7 +555,7 @@ static void reserve_memory_end(void)
+ /*
+  * Make sure that oldmem, where the dump is stored, is protected
+  */
+-static void reserve_oldmem(void)
++static void __init reserve_oldmem(void)
+ {
+ #ifdef CONFIG_CRASH_DUMP
+ 	if (OLDMEM_BASE)
+@@ -567,7 +567,7 @@ static void reserve_oldmem(void)
+ /*
+  * Make sure that oldmem, where the dump is stored, is protected
+  */
+-static void remove_oldmem(void)
++static void __init remove_oldmem(void)
+ {
+ #ifdef CONFIG_CRASH_DUMP
+ 	if (OLDMEM_BASE)
+-- 
+2.43.0
+

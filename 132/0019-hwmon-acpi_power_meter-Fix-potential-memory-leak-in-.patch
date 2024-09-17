@@ -1,0 +1,45 @@
+From 407f5e88ddb3446d5d2ff305d2402deebe692908 Mon Sep 17 00:00:00 2001
+From: Misono Tomohiro <misono.tomohiro@jp.fujitsu.com>
+Date: Thu, 25 Jun 2020 13:32:42 +0900
+Subject: [PATCH 19/35] hwmon: (acpi_power_meter) Fix potential memory leak in
+ acpi_power_meter_add()
+
+[ Upstream commit 8b97f9922211c44a739c5cbd9502ecbb9f17f6d1 ]
+
+Although it rarely happens, we should call free_capabilities()
+if error happens after read_capabilities() to free allocated strings.
+
+Fixes: de584afa5e188 ("hwmon driver for ACPI 4.0 power meters")
+Signed-off-by: Misono Tomohiro <misono.tomohiro@jp.fujitsu.com>
+Link: https://lore.kernel.org/r/20200625043242.31175-1-misono.tomohiro@jp.fujitsu.com
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/hwmon/acpi_power_meter.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/hwmon/acpi_power_meter.c b/drivers/hwmon/acpi_power_meter.c
+index 2f2fb1966..2f40da04a 100644
+--- a/drivers/hwmon/acpi_power_meter.c
++++ b/drivers/hwmon/acpi_power_meter.c
+@@ -896,7 +896,7 @@ static int acpi_power_meter_add(struct acpi_device *device)
+ 
+ 	res = setup_attrs(resource);
+ 	if (res)
+-		goto exit_free;
++		goto exit_free_capability;
+ 
+ 	resource->hwmon_dev = hwmon_device_register(&device->dev);
+ 	if (IS_ERR(resource->hwmon_dev)) {
+@@ -909,6 +909,8 @@ static int acpi_power_meter_add(struct acpi_device *device)
+ 
+ exit_remove:
+ 	remove_attrs(resource);
++exit_free_capability:
++	free_capabilities(resource);
+ exit_free:
+ 	kfree(resource);
+ exit:
+-- 
+2.43.0
+

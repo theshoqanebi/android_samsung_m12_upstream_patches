@@ -1,0 +1,46 @@
+From 7216aff343bad1d8a71084a1931cdffec962cfc1 Mon Sep 17 00:00:00 2001
+From: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Date: Tue, 30 Jul 2019 11:28:57 +0200
+Subject: [PATCH 37/42] driver core: Fix creation of device links with
+ PM-runtime flags
+
+commit fb583c8eeeb1fd57e24ef41ed94c9112067aeac9 upstream.
+
+After commit 515db266a9da ("driver core: Remove device link creation
+limitation"), if PM-runtime flags are passed to device_link_add(), it
+will fail (returning NULL) due to an overly restrictive flags check
+introduced by that commit.
+
+Fix this issue by extending the check in question to cover the
+PM-runtime flags too.
+
+Fixes: 515db266a9da ("driver core: Remove device link creation limitation")
+Reported-by: Dmitry Osipenko <digetx@gmail.com>
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Tested-by: Dmitry Osipenko <digetx@gmail.com>
+Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Link: https://lore.kernel.org/r/7674989.cD04D8YV3U@kreacher
+Signed-off-by: Saravana Kannan <saravanak@google.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ drivers/base/core.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/drivers/base/core.c b/drivers/base/core.c
+index cabef93af..e4f5bfc4e 100755
+--- a/drivers/base/core.c
++++ b/drivers/base/core.c
+@@ -177,6 +177,9 @@ void device_pm_move_to_tail(struct device *dev)
+ 	device_links_read_unlock(idx);
+ }
+ 
++#define DL_ADD_VALID_FLAGS (DL_MANAGED_LINK_FLAGS | DL_FLAG_STATELESS | \
++			    DL_FLAG_PM_RUNTIME | DL_FLAG_RPM_ACTIVE)
++
+ /**
+  * device_link_add - Create a link between two devices.
+  * @consumer: Consumer end of the link.
+-- 
+2.43.0
+

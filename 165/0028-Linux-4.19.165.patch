@@ -1,0 +1,32 @@
+From 04bb6c9dc7fdf1f8617a53298db0e02893f75eed Mon Sep 17 00:00:00 2001
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Date: Wed, 6 Jan 2021 14:45:02 +0100
+Subject: [PATCH 28/28] Linux 4.19.165
+
+Tested-by: Pavel Machek (CIP) <pavel@denx.de>
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
+Tested-by: Guenter Roeck <linux@roeck-us.net>
+Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
+Tested-by: Shuah Khan <skhan@linuxfoundation.org>
+Link: https://lore.kernel.org/r/20210105090818.518271884@linuxfoundation.org
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Makefile b/Makefile
+index 410f270d3..8b54547f8 100644
+--- a/Makefile
++++ b/Makefile
+@@ -1,7 +1,7 @@
+ # SPDX-License-Identifier: GPL-2.0
+ VERSION = 4
+ PATCHLEVEL = 19
+-SUBLEVEL = 164
++SUBLEVEL = 165
+ EXTRAVERSION =
+ NAME = "People's Front"
+ 
+-- 
+2.43.0
+

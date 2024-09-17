@@ -1,0 +1,37 @@
+From ca21a0031f768eb938141e208c75ca4f7f1c483d Mon Sep 17 00:00:00 2001
+From: John Wang <wangzhiqiang.bj@bytedance.com>
+Date: Wed, 23 Dec 2020 13:55:23 +0800
+Subject: [PATCH 20/76] net/ncsi: Use real net-device for response handler
+
+[ Upstream commit 427c940558560bff2583d07fc119a21094675982 ]
+
+When aggregating ncsi interfaces and dedicated interfaces to bond
+interfaces, the ncsi response handler will use the wrong net device to
+find ncsi_dev, so that the ncsi interface will not work properly.
+Here, we use the original net device to fix it.
+
+Fixes: 138635cc27c9 ("net/ncsi: NCSI response packet handler")
+Signed-off-by: John Wang <wangzhiqiang.bj@bytedance.com>
+Link: https://lore.kernel.org/r/20201223055523.2069-1-wangzhiqiang.bj@bytedance.com
+Signed-off-by: Jakub Kicinski <kuba@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ net/ncsi/ncsi-rsp.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/net/ncsi/ncsi-rsp.c b/net/ncsi/ncsi-rsp.c
+index 930c1d379..a43c9a44f 100644
+--- a/net/ncsi/ncsi-rsp.c
++++ b/net/ncsi/ncsi-rsp.c
+@@ -949,7 +949,7 @@ int ncsi_rcv_rsp(struct sk_buff *skb, struct net_device *dev,
+ 	int payload, i, ret;
+ 
+ 	/* Find the NCSI device */
+-	nd = ncsi_find_dev(dev);
++	nd = ncsi_find_dev(orig_dev);
+ 	ndp = nd ? TO_NCSI_DEV_PRIV(nd) : NULL;
+ 	if (!ndp)
+ 		return -ENODEV;
+-- 
+2.43.0
+

@@ -1,0 +1,194 @@
+From 67c170f7fa64b772787041b10ce62b25b532e9c0 Mon Sep 17 00:00:00 2001
+From: Will Deacon <will@kernel.org>
+Date: Tue, 11 Aug 2020 11:27:24 +0100
+Subject: [PATCH 69/71] KVM: Pass MMU notifier range flags to
+ kvm_unmap_hva_range()
+
+commit fdfe7cbd58806522e799e2a50a15aee7f2cbb7b6 upstream.
+
+The 'flags' field of 'struct mmu_notifier_range' is used to indicate
+whether invalidate_range_{start,end}() are permitted to block. In the
+case of kvm_mmu_notifier_invalidate_range_start(), this field is not
+forwarded on to the architecture-specific implementation of
+kvm_unmap_hva_range() and therefore the backend cannot sensibly decide
+whether or not to block.
+
+Add an extra 'flags' parameter to kvm_unmap_hva_range() so that
+architectures are aware as to whether or not they are permitted to block.
+
+Cc: <stable@vger.kernel.org>
+Cc: Marc Zyngier <maz@kernel.org>
+Cc: Suzuki K Poulose <suzuki.poulose@arm.com>
+Cc: James Morse <james.morse@arm.com>
+Signed-off-by: Will Deacon <will@kernel.org>
+Message-Id: <20200811102725.7121-2-will@kernel.org>
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+[will: Backport to 4.19; use 'blockable' instead of non-existent range flags]
+Signed-off-by: Will Deacon <will@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ arch/arm/include/asm/kvm_host.h     | 2 +-
+ arch/arm64/include/asm/kvm_host.h   | 2 +-
+ arch/mips/include/asm/kvm_host.h    | 2 +-
+ arch/mips/kvm/mmu.c                 | 3 ++-
+ arch/powerpc/include/asm/kvm_host.h | 3 ++-
+ arch/powerpc/kvm/book3s.c           | 3 ++-
+ arch/powerpc/kvm/e500_mmu_host.c    | 3 ++-
+ arch/x86/include/asm/kvm_host.h     | 3 ++-
+ arch/x86/kvm/mmu.c                  | 3 ++-
+ virt/kvm/arm/mmu.c                  | 2 +-
+ virt/kvm/kvm_main.c                 | 2 +-
+ 11 files changed, 17 insertions(+), 11 deletions(-)
+
+diff --git a/arch/arm/include/asm/kvm_host.h b/arch/arm/include/asm/kvm_host.h
+index b24f6033b..49219408d 100644
+--- a/arch/arm/include/asm/kvm_host.h
++++ b/arch/arm/include/asm/kvm_host.h
+@@ -235,7 +235,7 @@ int __kvm_arm_vcpu_set_events(struct kvm_vcpu *vcpu,
+ 
+ #define KVM_ARCH_WANT_MMU_NOTIFIER
+ int kvm_unmap_hva_range(struct kvm *kvm,
+-			unsigned long start, unsigned long end);
++			unsigned long start, unsigned long end, bool blockable);
+ void kvm_set_spte_hva(struct kvm *kvm, unsigned long hva, pte_t pte);
+ 
+ unsigned long kvm_arm_num_regs(struct kvm_vcpu *vcpu);
+diff --git a/arch/arm64/include/asm/kvm_host.h b/arch/arm64/include/asm/kvm_host.h
+index c6c2c9c05..122a1e7b7 100644
+--- a/arch/arm64/include/asm/kvm_host.h
++++ b/arch/arm64/include/asm/kvm_host.h
+@@ -370,7 +370,7 @@ int __kvm_arm_vcpu_set_events(struct kvm_vcpu *vcpu,
+ 
+ #define KVM_ARCH_WANT_MMU_NOTIFIER
+ int kvm_unmap_hva_range(struct kvm *kvm,
+-			unsigned long start, unsigned long end);
++			unsigned long start, unsigned long end, bool blockable);
+ void kvm_set_spte_hva(struct kvm *kvm, unsigned long hva, pte_t pte);
+ int kvm_age_hva(struct kvm *kvm, unsigned long start, unsigned long end);
+ int kvm_test_age_hva(struct kvm *kvm, unsigned long hva);
+diff --git a/arch/mips/include/asm/kvm_host.h b/arch/mips/include/asm/kvm_host.h
+index 2b3fdfc9e..c254761cb 100644
+--- a/arch/mips/include/asm/kvm_host.h
++++ b/arch/mips/include/asm/kvm_host.h
+@@ -936,7 +936,7 @@ enum kvm_mips_fault_result kvm_trap_emul_gva_fault(struct kvm_vcpu *vcpu,
+ 
+ #define KVM_ARCH_WANT_MMU_NOTIFIER
+ int kvm_unmap_hva_range(struct kvm *kvm,
+-			unsigned long start, unsigned long end);
++			unsigned long start, unsigned long end, bool blockable);
+ void kvm_set_spte_hva(struct kvm *kvm, unsigned long hva, pte_t pte);
+ int kvm_age_hva(struct kvm *kvm, unsigned long start, unsigned long end);
+ int kvm_test_age_hva(struct kvm *kvm, unsigned long hva);
+diff --git a/arch/mips/kvm/mmu.c b/arch/mips/kvm/mmu.c
+index d8dcdb350..098a7afd4 100644
+--- a/arch/mips/kvm/mmu.c
++++ b/arch/mips/kvm/mmu.c
+@@ -512,7 +512,8 @@ static int kvm_unmap_hva_handler(struct kvm *kvm, gfn_t gfn, gfn_t gfn_end,
+ 	return 1;
+ }
+ 
+-int kvm_unmap_hva_range(struct kvm *kvm, unsigned long start, unsigned long end)
++int kvm_unmap_hva_range(struct kvm *kvm, unsigned long start, unsigned long end,
++			bool blockable)
+ {
+ 	handle_hva_to_gpa(kvm, start, end, &kvm_unmap_hva_handler, NULL);
+ 
+diff --git a/arch/powerpc/include/asm/kvm_host.h b/arch/powerpc/include/asm/kvm_host.h
+index 2f95e38f0..7b54d8412 100644
+--- a/arch/powerpc/include/asm/kvm_host.h
++++ b/arch/powerpc/include/asm/kvm_host.h
+@@ -68,7 +68,8 @@
+ #define KVM_ARCH_WANT_MMU_NOTIFIER
+ 
+ extern int kvm_unmap_hva_range(struct kvm *kvm,
+-			       unsigned long start, unsigned long end);
++			       unsigned long start, unsigned long end,
++			       bool blockable);
+ extern int kvm_age_hva(struct kvm *kvm, unsigned long start, unsigned long end);
+ extern int kvm_test_age_hva(struct kvm *kvm, unsigned long hva);
+ extern void kvm_set_spte_hva(struct kvm *kvm, unsigned long hva, pte_t pte);
+diff --git a/arch/powerpc/kvm/book3s.c b/arch/powerpc/kvm/book3s.c
+index cc05f346e..bc9d1321d 100644
+--- a/arch/powerpc/kvm/book3s.c
++++ b/arch/powerpc/kvm/book3s.c
+@@ -812,7 +812,8 @@ void kvmppc_core_commit_memory_region(struct kvm *kvm,
+ 	kvm->arch.kvm_ops->commit_memory_region(kvm, mem, old, new);
+ }
+ 
+-int kvm_unmap_hva_range(struct kvm *kvm, unsigned long start, unsigned long end)
++int kvm_unmap_hva_range(struct kvm *kvm, unsigned long start, unsigned long end,
++			bool blockable)
+ {
+ 	return kvm->arch.kvm_ops->unmap_hva_range(kvm, start, end);
+ }
+diff --git a/arch/powerpc/kvm/e500_mmu_host.c b/arch/powerpc/kvm/e500_mmu_host.c
+index 8f2985e46..bbb02195d 100644
+--- a/arch/powerpc/kvm/e500_mmu_host.c
++++ b/arch/powerpc/kvm/e500_mmu_host.c
+@@ -737,7 +737,8 @@ static int kvm_unmap_hva(struct kvm *kvm, unsigned long hva)
+ 	return 0;
+ }
+ 
+-int kvm_unmap_hva_range(struct kvm *kvm, unsigned long start, unsigned long end)
++int kvm_unmap_hva_range(struct kvm *kvm, unsigned long start, unsigned long end,
++			bool blockable)
+ {
+ 	/* kvm_unmap_hva flushes everything anyways */
+ 	kvm_unmap_hva(kvm, start);
+diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
+index ce7b3b22a..4876411a0 100644
+--- a/arch/x86/include/asm/kvm_host.h
++++ b/arch/x86/include/asm/kvm_host.h
+@@ -1465,7 +1465,8 @@ asmlinkage void __noreturn kvm_spurious_fault(void);
+ 	____kvm_handle_fault_on_reboot(insn, "")
+ 
+ #define KVM_ARCH_WANT_MMU_NOTIFIER
+-int kvm_unmap_hva_range(struct kvm *kvm, unsigned long start, unsigned long end);
++int kvm_unmap_hva_range(struct kvm *kvm, unsigned long start, unsigned long end,
++			bool blockable);
+ int kvm_age_hva(struct kvm *kvm, unsigned long start, unsigned long end);
+ int kvm_test_age_hva(struct kvm *kvm, unsigned long hva);
+ void kvm_set_spte_hva(struct kvm *kvm, unsigned long hva, pte_t pte);
+diff --git a/arch/x86/kvm/mmu.c b/arch/x86/kvm/mmu.c
+index 92ff656e1..a2ff5c214 100644
+--- a/arch/x86/kvm/mmu.c
++++ b/arch/x86/kvm/mmu.c
+@@ -1956,7 +1956,8 @@ static int kvm_handle_hva(struct kvm *kvm, unsigned long hva,
+ 	return kvm_handle_hva_range(kvm, hva, hva + 1, data, handler);
+ }
+ 
+-int kvm_unmap_hva_range(struct kvm *kvm, unsigned long start, unsigned long end)
++int kvm_unmap_hva_range(struct kvm *kvm, unsigned long start, unsigned long end,
++			bool blockable)
+ {
+ 	return kvm_handle_hva_range(kvm, start, end, 0, kvm_unmap_rmapp);
+ }
+diff --git a/virt/kvm/arm/mmu.c b/virt/kvm/arm/mmu.c
+index a5bc10d30..3957ff0ec 100644
+--- a/virt/kvm/arm/mmu.c
++++ b/virt/kvm/arm/mmu.c
+@@ -1825,7 +1825,7 @@ static int kvm_unmap_hva_handler(struct kvm *kvm, gpa_t gpa, u64 size, void *dat
+ }
+ 
+ int kvm_unmap_hva_range(struct kvm *kvm,
+-			unsigned long start, unsigned long end)
++			unsigned long start, unsigned long end, bool blockable)
+ {
+ 	if (!kvm->arch.pgd)
+ 		return 0;
+diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+index 1218ea663..2155b52b1 100644
+--- a/virt/kvm/kvm_main.c
++++ b/virt/kvm/kvm_main.c
+@@ -410,7 +410,7 @@ static int kvm_mmu_notifier_invalidate_range_start(struct mmu_notifier *mn,
+ 	 * count is also read inside the mmu_lock critical section.
+ 	 */
+ 	kvm->mmu_notifier_count++;
+-	need_tlb_flush = kvm_unmap_hva_range(kvm, start, end);
++	need_tlb_flush = kvm_unmap_hva_range(kvm, start, end, blockable);
+ 	need_tlb_flush |= kvm->tlbs_dirty;
+ 	/* we've to flush the tlb before the pages can be freed */
+ 	if (need_tlb_flush)
+-- 
+2.43.0
+

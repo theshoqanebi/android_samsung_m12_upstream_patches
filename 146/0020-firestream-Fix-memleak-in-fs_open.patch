@@ -1,0 +1,32 @@
+From 96b8dea5c9253d91fc7f6f3ed3673c70358a0f6f Mon Sep 17 00:00:00 2001
+From: Dinghao Liu <dinghao.liu@zju.edu.cn>
+Date: Sun, 23 Aug 2020 19:29:35 +0800
+Subject: [PATCH 20/78] firestream: Fix memleak in fs_open
+
+[ Upstream commit 15ac5cdafb9202424206dc5bd376437a358963f9 ]
+
+When make_rate() fails, vcc should be freed just
+like other error paths in fs_open().
+
+Signed-off-by: Dinghao Liu <dinghao.liu@zju.edu.cn>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/atm/firestream.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/atm/firestream.c b/drivers/atm/firestream.c
+index 112b1001c..ef395b238 100644
+--- a/drivers/atm/firestream.c
++++ b/drivers/atm/firestream.c
+@@ -1013,6 +1013,7 @@ static int fs_open(struct atm_vcc *atm_vcc)
+ 				error = make_rate (pcr, r, &tmc0, NULL);
+ 				if (error) {
+ 					kfree(tc);
++					kfree(vcc);
+ 					return error;
+ 				}
+ 			}
+-- 
+2.43.0
+

@@ -1,0 +1,39 @@
+From 43051313d30a1f068eedc1deb2debbbe39ec36ed Mon Sep 17 00:00:00 2001
+From: kazuo ito <kzpn200@gmail.com>
+Date: Fri, 27 Nov 2020 15:26:59 +0900
+Subject: [PATCH 205/333] nfsd: Fix message level for normal termination
+
+[ Upstream commit 4420440c57892779f265108f46f83832a88ca795 ]
+
+The warning message from nfsd terminating normally
+can confuse system adminstrators or monitoring software.
+
+Though it's not exactly fair to pin-point a commit where it
+originated, the current form in the current place started
+to appear in:
+
+Fixes: e096bbc6488d ("knfsd: remove special handling for SIGHUP")
+Signed-off-by: kazuo ito <kzpn200@gmail.com>
+Signed-off-by: Chuck Lever <chuck.lever@oracle.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ fs/nfsd/nfssvc.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/fs/nfsd/nfssvc.c b/fs/nfsd/nfssvc.c
+index 89cb484f1..ad3863339 100644
+--- a/fs/nfsd/nfssvc.c
++++ b/fs/nfsd/nfssvc.c
+@@ -417,8 +417,7 @@ static void nfsd_last_thread(struct svc_serv *serv, struct net *net)
+ 		return;
+ 
+ 	nfsd_shutdown_net(net);
+-	printk(KERN_WARNING "nfsd: last server has exited, flushing export "
+-			    "cache\n");
++	pr_info("nfsd: last server has exited, flushing export cache\n");
+ 	nfsd_export_flush(net);
+ }
+ 
+-- 
+2.43.0
+

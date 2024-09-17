@@ -1,0 +1,30 @@
+From b6106799b859b136db5cbe4bd57ea09ac2ac9062 Mon Sep 17 00:00:00 2001
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Date: Sat, 12 Sep 2020 13:40:23 +0200
+Subject: [PATCH 9/9] Linux 4.19.145
+
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
+Tested-by: Shuah Khan <skhan@linuxfoundation.org>
+Tested-by: Guenter Roeck <linux@roeck-us.net>
+Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Makefile b/Makefile
+index 5cc87c878..4d8a7f622 100644
+--- a/Makefile
++++ b/Makefile
+@@ -1,7 +1,7 @@
+ # SPDX-License-Identifier: GPL-2.0
+ VERSION = 4
+ PATCHLEVEL = 19
+-SUBLEVEL = 144
++SUBLEVEL = 145
+ EXTRAVERSION =
+ NAME = "People's Front"
+ 
+-- 
+2.43.0
+

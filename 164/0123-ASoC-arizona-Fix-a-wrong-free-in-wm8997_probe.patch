@@ -1,0 +1,38 @@
+From 524577f4a15e8a6f2173e9c6272b36684c39a132 Mon Sep 17 00:00:00 2001
+From: Zhang Qilong <zhangqilong3@huawei.com>
+Date: Wed, 11 Nov 2020 21:09:20 +0800
+Subject: [PATCH 123/333] ASoC: arizona: Fix a wrong free in wm8997_probe
+
+[ Upstream commit 5e7aace13df24ff72511f29c14ebbfe638ef733c ]
+
+In the normal path, we should not free the arizona,
+we should return immediately. It will be free when
+call remove operation.
+
+Fixes: 31833ead95c2c ("ASoC: arizona: Move request of speaker IRQs into bus probe")
+Reported-by: Richard Fitzgerald <rf@opensource.cirrus.com>
+Signed-off-by: Zhang Qilong <zhangqilong3@huawei.com>
+Acked-by: Richard Fitzgerald <rf@opensource.cirrus.com>
+Link: https://lore.kernel.org/r/20201111130923.220186-2-zhangqilong3@huawei.com
+Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ sound/soc/codecs/wm8997.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/sound/soc/codecs/wm8997.c b/sound/soc/codecs/wm8997.c
+index df5b36b8f..bb6a95be8 100644
+--- a/sound/soc/codecs/wm8997.c
++++ b/sound/soc/codecs/wm8997.c
+@@ -1180,6 +1180,8 @@ static int wm8997_probe(struct platform_device *pdev)
+ 		goto err_spk_irqs;
+ 	}
+ 
++	return ret;
++
+ err_spk_irqs:
+ 	arizona_free_spk_irqs(arizona);
+ 
+-- 
+2.43.0
+

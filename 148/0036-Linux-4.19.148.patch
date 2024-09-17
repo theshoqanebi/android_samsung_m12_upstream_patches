@@ -1,0 +1,32 @@
+From 0a2ab497fd9de537fd51148e7e879000ca8c893b Mon Sep 17 00:00:00 2001
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Date: Sat, 26 Sep 2020 18:01:33 +0200
+Subject: [PATCH 36/36] Linux 4.19.148
+
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
+Tested-by: Shuah Khan <skhan@linuxfoundation.org>
+Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
+Tested-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Link: https://lore.kernel.org/r/20200925124720.972208530@linuxfoundation.org
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Makefile b/Makefile
+index c732625ab..c1b871085 100644
+--- a/Makefile
++++ b/Makefile
+@@ -1,7 +1,7 @@
+ # SPDX-License-Identifier: GPL-2.0
+ VERSION = 4
+ PATCHLEVEL = 19
+-SUBLEVEL = 147
++SUBLEVEL = 148
+ EXTRAVERSION =
+ NAME = "People's Front"
+ 
+-- 
+2.43.0
+

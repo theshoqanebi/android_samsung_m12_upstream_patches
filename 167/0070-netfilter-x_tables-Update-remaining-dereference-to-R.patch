@@ -1,0 +1,65 @@
+From 34663c676f24c44efef74b8d34634258dd303437 Mon Sep 17 00:00:00 2001
+From: Subash Abhinov Kasiviswanathan <subashab@codeaurora.org>
+Date: Wed, 16 Dec 2020 21:38:02 -0700
+Subject: [PATCH 70/76] netfilter: x_tables: Update remaining dereference to
+ RCU
+
+commit 443d6e86f821a165fae3fc3fc13086d27ac140b1 upstream.
+
+This fixes the dereference to fetch the RCU pointer when holding
+the appropriate xtables lock.
+
+Reported-by: kernel test robot <lkp@intel.com>
+Fixes: cc00bcaa5899 ("netfilter: x_tables: Switch synchronization to RCU")
+Signed-off-by: Subash Abhinov Kasiviswanathan <subashab@codeaurora.org>
+Reviewed-by: Florian Westphal <fw@strlen.de>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ net/ipv4/netfilter/arp_tables.c | 2 +-
+ net/ipv4/netfilter/ip_tables.c  | 2 +-
+ net/ipv6/netfilter/ip6_tables.c | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/net/ipv4/netfilter/arp_tables.c b/net/ipv4/netfilter/arp_tables.c
+index ca20efe77..a2cae543a 100644
+--- a/net/ipv4/netfilter/arp_tables.c
++++ b/net/ipv4/netfilter/arp_tables.c
+@@ -1405,7 +1405,7 @@ static int compat_get_entries(struct net *net,
+ 	xt_compat_lock(NFPROTO_ARP);
+ 	t = xt_find_table_lock(net, NFPROTO_ARP, get.name);
+ 	if (!IS_ERR(t)) {
+-		const struct xt_table_info *private = t->private;
++		const struct xt_table_info *private = xt_table_get_private_protected(t);
+ 		struct xt_table_info info;
+ 
+ 		ret = compat_table_info(private, &info);
+diff --git a/net/ipv4/netfilter/ip_tables.c b/net/ipv4/netfilter/ip_tables.c
+index 115d48049..6672172a7 100644
+--- a/net/ipv4/netfilter/ip_tables.c
++++ b/net/ipv4/netfilter/ip_tables.c
+@@ -1619,7 +1619,7 @@ compat_get_entries(struct net *net, struct compat_ipt_get_entries __user *uptr,
+ 	xt_compat_lock(AF_INET);
+ 	t = xt_find_table_lock(net, AF_INET, get.name);
+ 	if (!IS_ERR(t)) {
+-		const struct xt_table_info *private = t->private;
++		const struct xt_table_info *private = xt_table_get_private_protected(t);
+ 		struct xt_table_info info;
+ 		ret = compat_table_info(private, &info);
+ 		if (!ret && get.size == info.size)
+diff --git a/net/ipv6/netfilter/ip6_tables.c b/net/ipv6/netfilter/ip6_tables.c
+index b1441349e..3b067d5a6 100644
+--- a/net/ipv6/netfilter/ip6_tables.c
++++ b/net/ipv6/netfilter/ip6_tables.c
+@@ -1628,7 +1628,7 @@ compat_get_entries(struct net *net, struct compat_ip6t_get_entries __user *uptr,
+ 	xt_compat_lock(AF_INET6);
+ 	t = xt_find_table_lock(net, AF_INET6, get.name);
+ 	if (!IS_ERR(t)) {
+-		const struct xt_table_info *private = t->private;
++		const struct xt_table_info *private = xt_table_get_private_protected(t);
+ 		struct xt_table_info info;
+ 		ret = compat_table_info(private, &info);
+ 		if (!ret && get.size == info.size)
+-- 
+2.43.0
+

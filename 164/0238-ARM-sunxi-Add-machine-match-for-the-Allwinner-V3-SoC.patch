@@ -1,0 +1,35 @@
+From ec37fc55380979f851d40974a1d4e6025db1a581 Mon Sep 17 00:00:00 2001
+From: Paul Kocialkowski <contact@paulk.fr>
+Date: Sat, 31 Oct 2020 19:21:29 +0100
+Subject: [PATCH 238/333] ARM: sunxi: Add machine match for the Allwinner V3
+ SoC
+
+[ Upstream commit ad2091f893bd5dfe2824f0d6819600d120698e9f ]
+
+The Allwinner V3 SoC shares the same base as the V3s but comes with
+extra pins and features available. As a result, it has its dedicated
+compatible string (already used in device trees), which is added here.
+
+Signed-off-by: Paul Kocialkowski <contact@paulk.fr>
+Signed-off-by: Maxime Ripard <maxime@cerno.tech>
+Link: https://lore.kernel.org/r/20201031182137.1879521-2-contact@paulk.fr
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ arch/arm/mach-sunxi/sunxi.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/arm/mach-sunxi/sunxi.c b/arch/arm/mach-sunxi/sunxi.c
+index de4b0e932..aa08b8cb0 100644
+--- a/arch/arm/mach-sunxi/sunxi.c
++++ b/arch/arm/mach-sunxi/sunxi.c
+@@ -66,6 +66,7 @@ static const char * const sun8i_board_dt_compat[] = {
+ 	"allwinner,sun8i-h2-plus",
+ 	"allwinner,sun8i-h3",
+ 	"allwinner,sun8i-r40",
++	"allwinner,sun8i-v3",
+ 	"allwinner,sun8i-v3s",
+ 	NULL,
+ };
+-- 
+2.43.0
+

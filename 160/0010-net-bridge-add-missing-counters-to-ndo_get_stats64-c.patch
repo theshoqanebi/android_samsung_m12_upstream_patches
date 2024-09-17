@@ -1,0 +1,36 @@
+From 362f56359f2d520a512645da13fd414675a33dc8 Mon Sep 17 00:00:00 2001
+From: Heiner Kallweit <hkallweit1@gmail.com>
+Date: Fri, 13 Nov 2020 10:27:27 +0100
+Subject: [PATCH 10/87] net: bridge: add missing counters to ndo_get_stats64
+ callback
+
+[ Upstream commit 7a30ecc9237681bb125cbd30eee92bef7e86293d ]
+
+In br_forward.c and br_input.c fields dev->stats.tx_dropped and
+dev->stats.multicast are populated, but they are ignored in
+ndo_get_stats64.
+
+Fixes: 28172739f0a2 ("net: fix 64 bit counters on 32 bit arches")
+Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
+Link: https://lore.kernel.org/r/58ea9963-77ad-a7cf-8dfd-fc95ab95f606@gmail.com
+Signed-off-by: Jakub Kicinski <kuba@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ net/bridge/br_device.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/net/bridge/br_device.c b/net/bridge/br_device.c
+index 9ce661e25..a350c05b7 100644
+--- a/net/bridge/br_device.c
++++ b/net/bridge/br_device.c
+@@ -215,6 +215,7 @@ static void br_get_stats64(struct net_device *dev,
+ 		sum.rx_packets += tmp.rx_packets;
+ 	}
+ 
++	netdev_stats_to_stats64(stats, &dev->stats);
+ 	stats->tx_bytes   = sum.tx_bytes;
+ 	stats->tx_packets = sum.tx_packets;
+ 	stats->rx_bytes   = sum.rx_bytes;
+-- 
+2.43.0
+

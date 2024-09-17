@@ -1,0 +1,37 @@
+From 6dc2b1d01157eddd4187b298f02c631b711e2bd7 Mon Sep 17 00:00:00 2001
+From: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Date: Tue, 17 Mar 2020 08:22:15 +0200
+Subject: [PATCH 41/65] intel_th: pci: Add Elkhart Lake CPU support
+
+commit add492d2e9446a77ede9bb43699ec85ca8fc1aba upstream.
+
+This adds support for the Trace Hub in Elkhart Lake CPU.
+
+Signed-off-by: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: stable@vger.kernel.org
+Link: https://lore.kernel.org/r/20200317062215.15598-7-alexander.shishkin@linux.intel.com
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ drivers/hwtracing/intel_th/pci.c | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/drivers/hwtracing/intel_th/pci.c b/drivers/hwtracing/intel_th/pci.c
+index e63a0c24e..8424c8c61 100644
+--- a/drivers/hwtracing/intel_th/pci.c
++++ b/drivers/hwtracing/intel_th/pci.c
+@@ -210,6 +210,11 @@ static const struct pci_device_id intel_th_pci_id_table[] = {
+ 		PCI_DEVICE(PCI_VENDOR_ID_INTEL, 0x4da6),
+ 		.driver_data = (kernel_ulong_t)&intel_th_2x,
+ 	},
++	{
++		/* Elkhart Lake CPU */
++		PCI_DEVICE(PCI_VENDOR_ID_INTEL, 0x4529),
++		.driver_data = (kernel_ulong_t)&intel_th_2x,
++	},
+ 	{
+ 		/* Elkhart Lake */
+ 		PCI_DEVICE(PCI_VENDOR_ID_INTEL, 0x4b26),
+-- 
+2.43.0
+

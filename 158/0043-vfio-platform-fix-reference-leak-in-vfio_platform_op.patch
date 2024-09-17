@@ -1,0 +1,44 @@
+From d73355d7a36e2852c4cfb7057ef3f68bc7e2ae39 Mon Sep 17 00:00:00 2001
+From: Zhang Qilong <zhangqilong3@huawei.com>
+Date: Sat, 31 Oct 2020 11:03:53 +0800
+Subject: [PATCH 043/100] vfio: platform: fix reference leak in
+ vfio_platform_open
+
+[ Upstream commit bb742ad01961a3b9d1f9d19375487b879668b6b2 ]
+
+pm_runtime_get_sync() will increment pm usage counter even it
+failed. Forgetting to call pm_runtime_put will result in
+reference leak in vfio_platform_open, so we should fix it.
+
+Signed-off-by: Zhang Qilong <zhangqilong3@huawei.com>
+Acked-by: Eric Auger <eric.auger@redhat.com>
+Signed-off-by: Alex Williamson <alex.williamson@redhat.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/vfio/platform/vfio_platform_common.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/drivers/vfio/platform/vfio_platform_common.c b/drivers/vfio/platform/vfio_platform_common.c
+index c0cd824be..460760d0b 100644
+--- a/drivers/vfio/platform/vfio_platform_common.c
++++ b/drivers/vfio/platform/vfio_platform_common.c
+@@ -273,7 +273,7 @@ static int vfio_platform_open(void *device_data)
+ 
+ 		ret = pm_runtime_get_sync(vdev->device);
+ 		if (ret < 0)
+-			goto err_pm;
++			goto err_rst;
+ 
+ 		ret = vfio_platform_call_reset(vdev, &extra_dbg);
+ 		if (ret && vdev->reset_required) {
+@@ -290,7 +290,6 @@ static int vfio_platform_open(void *device_data)
+ 
+ err_rst:
+ 	pm_runtime_put(vdev->device);
+-err_pm:
+ 	vfio_platform_irq_cleanup(vdev);
+ err_irq:
+ 	vfio_platform_regions_cleanup(vdev);
+-- 
+2.43.0
+

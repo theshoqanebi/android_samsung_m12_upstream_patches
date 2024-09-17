@@ -1,0 +1,37 @@
+From 6fc6b1d9dda582e0a83331f36b90390e1452b441 Mon Sep 17 00:00:00 2001
+From: "Darrick J. Wong" <darrick.wong@oracle.com>
+Date: Wed, 11 Mar 2020 10:37:57 -0700
+Subject: [PATCH 106/240] xfs: mark dir corrupt when lookup-by-hash fails
+
+[ Upstream commit 2e107cf869eecc770e3f630060bb4e5f547d0fd8 ]
+
+In xchk_dir_actor, we attempt to validate the directory hash structures
+by performing a directory entry lookup by (hashed) name.  If the lookup
+returns ENOENT, that means that the hash information is corrupt.  The
+_process_error functions don't catch this, so we have to add that
+explicitly.
+
+Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
+Reviewed-by: Dave Chinner <dchinner@redhat.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ fs/xfs/scrub/dir.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/fs/xfs/scrub/dir.c b/fs/xfs/scrub/dir.c
+index cd3e4d768..33dfcba72 100644
+--- a/fs/xfs/scrub/dir.c
++++ b/fs/xfs/scrub/dir.c
+@@ -156,6 +156,9 @@ xchk_dir_actor(
+ 	xname.type = XFS_DIR3_FT_UNKNOWN;
+ 
+ 	error = xfs_dir_lookup(sdc->sc->tp, ip, &xname, &lookup_ino, NULL);
++	/* ENOENT means the hash lookup failed and the dir is corrupt */
++	if (error == -ENOENT)
++		error = -EFSCORRUPTED;
+ 	if (!xchk_fblock_process_error(sdc->sc, XFS_DATA_FORK, offset,
+ 			&error))
+ 		goto out;
+-- 
+2.43.0
+

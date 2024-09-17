@@ -1,0 +1,45 @@
+From 9bbbc3088909057c059febf33ab6b1f7580b9347 Mon Sep 17 00:00:00 2001
+From: Nick Desaulniers <ndesaulniers@google.com>
+Date: Fri, 28 Jun 2019 12:07:12 -0700
+Subject: [PATCH 23/36] MAINTAINERS: add CLANG/LLVM BUILD SUPPORT info
+
+commit 8708e13c6a0600625eea3aebd027c0715a5d2bb2 upstream.
+
+Add keyword support so that our mailing list gets cc'ed for clang/llvm
+patches.  We're pretty active on our mailing list so far as code review.
+There are numerous Googlers like myself that are paid to support
+building the Linux kernel with Clang and LLVM.
+
+Link: http://lkml.kernel.org/r/20190620001907.255803-1-ndesaulniers@google.com
+Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
+Reviewed-by: Nathan Chancellor <natechancellor@gmail.com>
+Cc: Joe Perches <joe@perches.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ MAINTAINERS | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 858d94fe6..e5ce1cdc6 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -3626,6 +3626,14 @@ M:	Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+ S:	Maintained
+ F:	.clang-format
+ 
++CLANG/LLVM BUILD SUPPORT
++L:	clang-built-linux@googlegroups.com
++W:	https://clangbuiltlinux.github.io/
++B:	https://github.com/ClangBuiltLinux/linux/issues
++C:	irc://chat.freenode.net/clangbuiltlinux
++S:	Supported
++K:	\b(?i:clang|llvm)\b
++
+ CLEANCACHE API
+ M:	Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+ L:	linux-kernel@vger.kernel.org
+-- 
+2.43.0
+

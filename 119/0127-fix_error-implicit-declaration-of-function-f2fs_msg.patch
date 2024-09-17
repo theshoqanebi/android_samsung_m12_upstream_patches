@@ -1,0 +1,49 @@
+From a55da01dd3d12a75ed511c528bbc9cc81af4f8b9 Mon Sep 17 00:00:00 2001
+From: theshoqanebi <husseinshoqanebi@gmail.com>
+Date: Wed, 8 Nov 2023 12:36:28 +0300
+Subject: [PATCH 127/128] fix_error: implicit declaration of function
+ 'f2fs_msg'
+
+---
+ fs/f2fs/f2fs.h  |  1 +
+ fs/f2fs/super.c | 12 ++++++++++++
+ 2 files changed, 13 insertions(+)
+
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index fa1f78625..921d29d6a 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -3446,6 +3446,7 @@ int f2fs_quota_sync(struct super_block *sb, int type);
+ void f2fs_quota_off_umount(struct super_block *sb);
+ int f2fs_commit_super(struct f2fs_sb_info *sbi, bool recover);
+ int f2fs_sync_fs(struct super_block *sb, int sync);
++void f2fs_msg(struct super_block *sb, const char *level, const char *fmt, ...);
+ int f2fs_sanity_check_ckpt(struct f2fs_sb_info *sbi);
+ 
+ /*
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 1942f321b..978f4e0ae 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -365,6 +365,18 @@ static int f2fs_sb_read_encoding(const struct f2fs_super_block *sb,
+ }
+ #endif
+ 
++void f2fs_msg(struct super_block *sb, const char *level, const char *fmt, ...)
++{
++	struct va_format vaf;
++	va_list args;
++
++	va_start(args, fmt);
++	vaf.fmt = fmt;
++	vaf.va = &args;
++	printk_ratelimited("%sF2FS-fs (%s): %pV\n", level, sb->s_id, &vaf);
++	va_end(args);
++}
++
+ static inline void limit_reserve_root(struct f2fs_sb_info *sbi)
+ {
+ 	block_t limit = min(sbi->user_block_count / 100,
+-- 
+2.43.0
+

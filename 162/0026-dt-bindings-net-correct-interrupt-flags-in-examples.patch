@@ -1,0 +1,61 @@
+From 42db45cfcdb0c37470741971a5217a395bcdc550 Mon Sep 17 00:00:00 2001
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Date: Mon, 26 Oct 2020 16:36:20 +0100
+Subject: [PATCH 26/32] dt-bindings: net: correct interrupt flags in examples
+
+[ Upstream commit 4d521943f76bd0d1e68ea5e02df7aadd30b2838a ]
+
+GPIO_ACTIVE_x flags are not correct in the context of interrupt flags.
+These are simple defines so they could be used in DTS but they will not
+have the same meaning:
+1. GPIO_ACTIVE_HIGH = 0 = IRQ_TYPE_NONE
+2. GPIO_ACTIVE_LOW  = 1 = IRQ_TYPE_EDGE_RISING
+
+Correct the interrupt flags, assuming the author of the code wanted same
+logical behavior behind the name "ACTIVE_xxx", this is:
+  ACTIVE_LOW  => IRQ_TYPE_LEVEL_LOW
+  ACTIVE_HIGH => IRQ_TYPE_LEVEL_HIGH
+
+Fixes: a1a8b4594f8d ("NFC: pn544: i2c: Add DTS Documentation")
+Fixes: 6be88670fc59 ("NFC: nxp-nci_i2c: Add I2C support to NXP NCI driver")
+Fixes: e3b329221567 ("dt-bindings: can: tcan4x5x: Update binding to use interrupt property")
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+Acked-by: Rob Herring <robh@kernel.org>
+Acked-by: Marc Kleine-Budde <mkl@pengutronix.de> # for tcan4x5x.txt
+Link: https://lore.kernel.org/r/20201026153620.89268-1-krzk@kernel.org
+Signed-off-by: Jakub Kicinski <kuba@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ Documentation/devicetree/bindings/net/nfc/nxp-nci.txt | 2 +-
+ Documentation/devicetree/bindings/net/nfc/pn544.txt   | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/net/nfc/nxp-nci.txt b/Documentation/devicetree/bindings/net/nfc/nxp-nci.txt
+index cfaf88998..9e4dc510a 100644
+--- a/Documentation/devicetree/bindings/net/nfc/nxp-nci.txt
++++ b/Documentation/devicetree/bindings/net/nfc/nxp-nci.txt
+@@ -25,7 +25,7 @@ Example (for ARM-based BeagleBone with NPC100 NFC controller on I2C2):
+ 		clock-frequency = <100000>;
+ 
+ 		interrupt-parent = <&gpio1>;
+-		interrupts = <29 GPIO_ACTIVE_HIGH>;
++		interrupts = <29 IRQ_TYPE_LEVEL_HIGH>;
+ 
+ 		enable-gpios = <&gpio0 30 GPIO_ACTIVE_HIGH>;
+ 		firmware-gpios = <&gpio0 31 GPIO_ACTIVE_HIGH>;
+diff --git a/Documentation/devicetree/bindings/net/nfc/pn544.txt b/Documentation/devicetree/bindings/net/nfc/pn544.txt
+index 92f399ec2..2bd82562c 100644
+--- a/Documentation/devicetree/bindings/net/nfc/pn544.txt
++++ b/Documentation/devicetree/bindings/net/nfc/pn544.txt
+@@ -25,7 +25,7 @@ Example (for ARM-based BeagleBone with PN544 on I2C2):
+ 		clock-frequency = <400000>;
+ 
+ 		interrupt-parent = <&gpio1>;
+-		interrupts = <17 GPIO_ACTIVE_HIGH>;
++		interrupts = <17 IRQ_TYPE_LEVEL_HIGH>;
+ 
+ 		enable-gpios = <&gpio3 21 GPIO_ACTIVE_HIGH>;
+ 		firmware-gpios = <&gpio3 19 GPIO_ACTIVE_HIGH>;
+-- 
+2.43.0
+

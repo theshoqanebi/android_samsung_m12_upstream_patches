@@ -1,0 +1,37 @@
+From 2e347b3fb1694399a3a86a4950da2590cae674d3 Mon Sep 17 00:00:00 2001
+From: Chuhong Yuan <hslester96@gmail.com>
+Date: Thu, 28 May 2020 08:41:47 +0200
+Subject: [PATCH 068/162] media: exynos4-is: Add missed check for
+ pinctrl_lookup_state()
+
+[ Upstream commit 18ffec750578f7447c288647d7282c7d12b1d969 ]
+
+fimc_md_get_pinctrl() misses a check for pinctrl_lookup_state().
+Add the missed check to fix it.
+
+Fixes: 4163851f7b99 ("[media] s5p-fimc: Use pinctrl API for camera ports configuration]")
+Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
+Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/media/platform/exynos4-is/media-dev.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/drivers/media/platform/exynos4-is/media-dev.c b/drivers/media/platform/exynos4-is/media-dev.c
+index b59935328..2d25a197d 100644
+--- a/drivers/media/platform/exynos4-is/media-dev.c
++++ b/drivers/media/platform/exynos4-is/media-dev.c
+@@ -1259,6 +1259,9 @@ static int fimc_md_get_pinctrl(struct fimc_md *fmd)
+ 
+ 	pctl->state_idle = pinctrl_lookup_state(pctl->pinctrl,
+ 					PINCTRL_STATE_IDLE);
++	if (IS_ERR(pctl->state_idle))
++		return PTR_ERR(pctl->state_idle);
++
+ 	return 0;
+ }
+ 
+-- 
+2.43.0
+

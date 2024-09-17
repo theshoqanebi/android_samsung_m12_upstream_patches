@@ -1,0 +1,40 @@
+From 38c9a7225e2936396ea58df1f6db1f32657d2be1 Mon Sep 17 00:00:00 2001
+From: chenqiwu <chenqiwu@xiaomi.com>
+Date: Fri, 7 Feb 2020 17:46:39 +0800
+Subject: [PATCH 024/143] pstore/platform: fix potential mem leak if
+ pstore_init_fs failed
+
+[ Upstream commit 8a57d6d4ddfa41c49014e20493152c41a38fcbf8 ]
+
+There is a potential mem leak when pstore_init_fs failed,
+since the pstore compression maybe unlikey to initialized
+successfully. We must clean up the allocation once this
+unlikey issue happens.
+
+Signed-off-by: chenqiwu <chenqiwu@xiaomi.com>
+Link: https://lore.kernel.org/r/1581068800-13817-1-git-send-email-qiwuchen55@gmail.com
+Signed-off-by: Kees Cook <keescook@chromium.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ fs/pstore/platform.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/fs/pstore/platform.c b/fs/pstore/platform.c
+index 64694e398..4b9667a58 100644
+--- a/fs/pstore/platform.c
++++ b/fs/pstore/platform.c
+@@ -805,9 +805,9 @@ static int __init pstore_init(void)
+ 
+ 	ret = pstore_init_fs();
+ 	if (ret)
+-		return ret;
++		free_buf_for_compression();
+ 
+-	return 0;
++	return ret;
+ }
+ late_initcall(pstore_init);
+ 
+-- 
+2.43.0
+

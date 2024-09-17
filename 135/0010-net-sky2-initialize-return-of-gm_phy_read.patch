@@ -1,0 +1,48 @@
+From 23c5aaa18149b2cab59a0556a7d7e4f2cfa937f4 Mon Sep 17 00:00:00 2001
+From: Tom Rix <trix@redhat.com>
+Date: Fri, 3 Jul 2020 06:33:59 -0700
+Subject: [PATCH 10/86] net: sky2: initialize return of gm_phy_read
+
+[ Upstream commit 28b18e4eb515af7c6661c3995c6e3c34412c2874 ]
+
+clang static analysis flags this garbage return
+
+drivers/net/ethernet/marvell/sky2.c:208:2: warning: Undefined or garbage value returned to caller [core.uninitialized.UndefReturn]
+        return v;
+        ^~~~~~~~
+
+static inline u16 gm_phy_read( ...
+{
+	u16 v;
+	__gm_phy_read(hw, port, reg, &v);
+	return v;
+}
+
+__gm_phy_read can return without setting v.
+
+So handle similar to skge.c's gm_phy_read, initialize v.
+
+Signed-off-by: Tom Rix <trix@redhat.com>
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/net/ethernet/marvell/sky2.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/marvell/sky2.c b/drivers/net/ethernet/marvell/sky2.c
+index d013f3001..2452d8ba4 100644
+--- a/drivers/net/ethernet/marvell/sky2.c
++++ b/drivers/net/ethernet/marvell/sky2.c
+@@ -215,7 +215,7 @@ io_error:
+ 
+ static inline u16 gm_phy_read(struct sky2_hw *hw, unsigned port, u16 reg)
+ {
+-	u16 v;
++	u16 v = 0;
+ 	__gm_phy_read(hw, port, reg, &v);
+ 	return v;
+ }
+-- 
+2.43.0
+

@@ -1,0 +1,35 @@
+From 0514d5a41bd1d49ba81eb836513b74267fa3dcd3 Mon Sep 17 00:00:00 2001
+From: Nicolin Chen <nicoleotsuka@gmail.com>
+Date: Wed, 18 Nov 2020 20:44:57 -0800
+Subject: [PATCH 074/333] soc/tegra: fuse: Fix index bug in get_process_id
+
+commit b9ce9b0f83b536a4ac7de7567a265d28d13e5bea upstream.
+
+This patch simply fixes a bug of referencing speedos[num] in every
+for-loop iteration in get_process_id function.
+
+Fixes: 0dc5a0d83675 ("soc/tegra: fuse: Add Tegra210 support")
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Nicolin Chen <nicoleotsuka@gmail.com>
+Signed-off-by: Thierry Reding <treding@nvidia.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ drivers/soc/tegra/fuse/speedo-tegra210.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/soc/tegra/fuse/speedo-tegra210.c b/drivers/soc/tegra/fuse/speedo-tegra210.c
+index 5373f4c16..4403b8956 100644
+--- a/drivers/soc/tegra/fuse/speedo-tegra210.c
++++ b/drivers/soc/tegra/fuse/speedo-tegra210.c
+@@ -105,7 +105,7 @@ static int get_process_id(int value, const u32 *speedos, unsigned int num)
+ 	unsigned int i;
+ 
+ 	for (i = 0; i < num; i++)
+-		if (value < speedos[num])
++		if (value < speedos[i])
+ 			return i;
+ 
+ 	return -EINVAL;
+-- 
+2.43.0
+

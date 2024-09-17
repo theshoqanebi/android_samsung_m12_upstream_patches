@@ -1,0 +1,33 @@
+From caa6ac14a31ac835813e34dbb476d9bad7e3d41e Mon Sep 17 00:00:00 2001
+From: Pavel Machek <pavel@denx.de>
+Date: Mon, 21 Sep 2020 13:34:35 +0200
+Subject: [PATCH 058/115] crypto: ccp - fix error handling
+
+[ Upstream commit e356c49c6cf0db3f00e1558749170bd56e47652d ]
+
+Fix resource leak in error handling.
+
+Signed-off-by: Pavel Machek (CIP) <pavel@denx.de>
+Acked-by: John Allen <john.allen@amd.com>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/crypto/ccp/ccp-ops.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/crypto/ccp/ccp-ops.c b/drivers/crypto/ccp/ccp-ops.c
+index 626b643d6..20ca9c9e1 100644
+--- a/drivers/crypto/ccp/ccp-ops.c
++++ b/drivers/crypto/ccp/ccp-ops.c
+@@ -1752,7 +1752,7 @@ ccp_run_sha_cmd(struct ccp_cmd_queue *cmd_q, struct ccp_cmd *cmd)
+ 			break;
+ 		default:
+ 			ret = -EINVAL;
+-			goto e_ctx;
++			goto e_data;
+ 		}
+ 	} else {
+ 		/* Stash the context */
+-- 
+2.43.0
+

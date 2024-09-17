@@ -1,0 +1,25 @@
+From b65f240ee6f6fa4c9074abf38c23e09a95c3285e Mon Sep 17 00:00:00 2001
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Date: Mon, 22 Jun 2020 09:05:30 +0200
+Subject: [PATCH 264/264] Linux 4.19.129
+
+---
+ Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Makefile b/Makefile
+index 7b5f8eef0..90c1d1d84 100644
+--- a/Makefile
++++ b/Makefile
+@@ -1,7 +1,7 @@
+ # SPDX-License-Identifier: GPL-2.0
+ VERSION = 4
+ PATCHLEVEL = 19
+-SUBLEVEL = 128
++SUBLEVEL = 129
+ EXTRAVERSION =
+ NAME = "People's Front"
+ 
+-- 
+2.43.0
+

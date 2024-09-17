@@ -1,0 +1,43 @@
+From 914dc8802cbe56ae346c4907a389086e02aa807b Mon Sep 17 00:00:00 2001
+From: Wu Bo <wubo40@huawei.com>
+Date: Sun, 26 Apr 2020 21:17:22 +0800
+Subject: [PATCH 08/38] ALSA: hda/hdmi: fix without unlocked before return
+
+commit a2f647240998aa49632fb09b01388fdf2b87acfc upstream.
+
+Fix the following coccicheck warning:
+sound/pci/hda/patch_hdmi.c:1852:2-8: preceding lock on line 1846
+
+After add sanity check to pass klockwork check,
+The spdif_mutex should be unlock before return true
+in check_non_pcm_per_cvt().
+
+Fixes: 960a581e22d9 ("ALSA: hda: fix some klockwork scan warnings")
+Signed-off-by: Wu Bo <wubo40@huawei.com>
+Cc: <stable@vger.kernel.org>
+Link: https://lore.kernel.org/r/1587907042-694161-1-git-send-email-wubo40@huawei.com
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ sound/pci/hda/patch_hdmi.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/sound/pci/hda/patch_hdmi.c b/sound/pci/hda/patch_hdmi.c
+index c67fadd5a..12a064f99 100644
+--- a/sound/pci/hda/patch_hdmi.c
++++ b/sound/pci/hda/patch_hdmi.c
+@@ -1848,8 +1848,10 @@ static bool check_non_pcm_per_cvt(struct hda_codec *codec, hda_nid_t cvt_nid)
+ 	/* Add sanity check to pass klockwork check.
+ 	 * This should never happen.
+ 	 */
+-	if (WARN_ON(spdif == NULL))
++	if (WARN_ON(spdif == NULL)) {
++		mutex_unlock(&codec->spdif_mutex);
+ 		return true;
++	}
+ 	non_pcm = !!(spdif->status & IEC958_AES0_NONAUDIO);
+ 	mutex_unlock(&codec->spdif_mutex);
+ 	return non_pcm;
+-- 
+2.43.0
+

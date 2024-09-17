@@ -1,0 +1,41 @@
+From bd85f91a6fcc45d24a2d7f6b2003af3888bd0c7d Mon Sep 17 00:00:00 2001
+From: Ian Rogers <irogers@google.com>
+Date: Tue, 12 May 2020 16:59:18 -0700
+Subject: [PATCH 172/240] perf evsel: Fix 2 memory leaks
+
+[ Upstream commit 3efc899d9afb3d03604f191a0be9669eabbfc4aa ]
+
+If allocated, perf_pkg_mask and metric_events need freeing.
+
+Signed-off-by: Ian Rogers <irogers@google.com>
+Reviewed-by: Andi Kleen <ak@linux.intel.com>
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Stephane Eranian <eranian@google.com>
+Link: http://lore.kernel.org/lkml/20200512235918.10732-1-irogers@google.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ tools/perf/util/evsel.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
+index 68c5ab0e1..11a2aa808 100644
+--- a/tools/perf/util/evsel.c
++++ b/tools/perf/util/evsel.c
+@@ -1291,6 +1291,8 @@ void perf_evsel__exit(struct perf_evsel *evsel)
+ 	zfree(&evsel->group_name);
+ 	zfree(&evsel->name);
+ 	zfree(&evsel->pmu_name);
++	zfree(&evsel->per_pkg_mask);
++	zfree(&evsel->metric_events);
+ 	perf_evsel__object.fini(evsel);
+ }
+ 
+-- 
+2.43.0
+

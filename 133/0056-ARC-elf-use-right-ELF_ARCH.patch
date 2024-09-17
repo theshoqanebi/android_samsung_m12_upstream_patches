@@ -1,0 +1,30 @@
+From d72c6f099b9488bd706838ac4bc10ac2c16880b1 Mon Sep 17 00:00:00 2001
+From: Vineet Gupta <vgupta@synopsys.com>
+Date: Wed, 27 May 2020 14:18:45 -0700
+Subject: [PATCH 56/58] ARC: elf: use right ELF_ARCH
+
+commit b7faf971081a4e56147f082234bfff55135305cb upstream.
+
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Vineet Gupta <vgupta@synopsys.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ arch/arc/include/asm/elf.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/arc/include/asm/elf.h b/arch/arc/include/asm/elf.h
+index aa2d6da9d..12c74e826 100644
+--- a/arch/arc/include/asm/elf.h
++++ b/arch/arc/include/asm/elf.h
+@@ -26,7 +26,7 @@
+ #define  R_ARC_32_PCREL		0x31
+ 
+ /*to set parameters in the core dumps */
+-#define ELF_ARCH		EM_ARCOMPACT
++#define ELF_ARCH		EM_ARC_INUSE
+ #define ELF_CLASS		ELFCLASS32
+ 
+ #ifdef CONFIG_CPU_BIG_ENDIAN
+-- 
+2.43.0
+

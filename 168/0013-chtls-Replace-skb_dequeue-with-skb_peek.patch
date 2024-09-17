@@ -1,0 +1,37 @@
+From 0e5bb6fd4bb023e1464a74343fe0ca7982f4a4e2 Mon Sep 17 00:00:00 2001
+From: Ayush Sawal <ayush.sawal@chelsio.com>
+Date: Wed, 6 Jan 2021 09:59:10 +0530
+Subject: [PATCH 13/44] chtls: Replace skb_dequeue with skb_peek
+
+[ Upstream commit a84b2c0d5fa23da6d6c8c0d5f5c93184a2744d3e ]
+
+The skb is unlinked twice, one in __skb_dequeue in function
+chtls_reset_synq() and another in cleanup_syn_rcv_conn().
+So in this patch using skb_peek() instead of __skb_dequeue(),
+so that unlink will be handled only in cleanup_syn_rcv_conn().
+
+Fixes: cc35c88ae4db ("crypto : chtls - CPL handler definition")
+Signed-off-by: Vinay Kumar Yadav <vinay.yadav@chelsio.com>
+Signed-off-by: Ayush Sawal <ayush.sawal@chelsio.com>
+Signed-off-by: Jakub Kicinski <kuba@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ drivers/crypto/chelsio/chtls/chtls_cm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/crypto/chelsio/chtls/chtls_cm.c b/drivers/crypto/chelsio/chtls/chtls_cm.c
+index 80d38de41..385bb5eb9 100644
+--- a/drivers/crypto/chelsio/chtls/chtls_cm.c
++++ b/drivers/crypto/chelsio/chtls/chtls_cm.c
+@@ -581,7 +581,7 @@ static void chtls_reset_synq(struct listen_ctx *listen_ctx)
+ 
+ 	while (!skb_queue_empty(&listen_ctx->synq)) {
+ 		struct chtls_sock *csk =
+-			container_of((struct synq *)__skb_dequeue
++			container_of((struct synq *)skb_peek
+ 				(&listen_ctx->synq), struct chtls_sock, synq);
+ 		struct sock *child = csk->sk;
+ 
+-- 
+2.43.0
+

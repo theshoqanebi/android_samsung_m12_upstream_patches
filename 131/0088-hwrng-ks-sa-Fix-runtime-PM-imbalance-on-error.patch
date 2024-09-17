@@ -1,0 +1,34 @@
+From 3603ff370ecc28a3c63103493f2eea05ecbcd1b9 Mon Sep 17 00:00:00 2001
+From: Dinghao Liu <dinghao.liu@zju.edu.cn>
+Date: Thu, 28 May 2020 15:21:04 +0800
+Subject: [PATCH 088/125] hwrng: ks-sa - Fix runtime PM imbalance on error
+
+[ Upstream commit 95459261c99f1621d90bc628c2a48e60b7cf9a88 ]
+
+pm_runtime_get_sync() increments the runtime PM usage counter even
+the call returns an error code. Thus a pairing decrement is needed
+on the error handling path to keep the counter balanced.
+
+Signed-off-by: Dinghao Liu <dinghao.liu@zju.edu.cn>
+Reviewed-by: Alexander Sverdlin <alexander.sverdlin@nokia.com>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/char/hw_random/ks-sa-rng.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/char/hw_random/ks-sa-rng.c b/drivers/char/hw_random/ks-sa-rng.c
+index 62c6696c1..b6d7db362 100644
+--- a/drivers/char/hw_random/ks-sa-rng.c
++++ b/drivers/char/hw_random/ks-sa-rng.c
+@@ -216,6 +216,7 @@ static int ks_sa_rng_probe(struct platform_device *pdev)
+ 	ret = pm_runtime_get_sync(dev);
+ 	if (ret < 0) {
+ 		dev_err(dev, "Failed to enable SA power-domain\n");
++		pm_runtime_put_noidle(dev);
+ 		pm_runtime_disable(dev);
+ 		return ret;
+ 	}
+-- 
+2.43.0
+

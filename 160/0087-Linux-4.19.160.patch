@@ -1,0 +1,31 @@
+From 34d50490608625d4146551f53402c7eadb5fab40 Mon Sep 17 00:00:00 2001
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Date: Tue, 24 Nov 2020 13:27:27 +0100
+Subject: [PATCH 87/87] Linux 4.19.160
+
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
+Tested-by: Guenter Roeck <linux@roeck-us.net>
+Tested-by: Shuah Khan <skhan@linuxfoundation.org>
+Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
+Link: https://lore.kernel.org/r/20201123121809.285416732@linuxfoundation.org
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Makefile b/Makefile
+index c47391c00..5862eeb21 100644
+--- a/Makefile
++++ b/Makefile
+@@ -1,7 +1,7 @@
+ # SPDX-License-Identifier: GPL-2.0
+ VERSION = 4
+ PATCHLEVEL = 19
+-SUBLEVEL = 159
++SUBLEVEL = 160
+ EXTRAVERSION =
+ NAME = "People's Front"
+ 
+-- 
+2.43.0
+

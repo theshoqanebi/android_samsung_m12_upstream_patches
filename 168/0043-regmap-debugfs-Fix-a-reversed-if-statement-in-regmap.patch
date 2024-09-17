@@ -1,0 +1,40 @@
+From bf4ec0e83176b8e659c261d6861297781b7f610b Mon Sep 17 00:00:00 2001
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 5 Jan 2021 14:42:29 +0300
+Subject: [PATCH 43/44] regmap: debugfs: Fix a reversed if statement in
+ regmap_debugfs_init()
+
+commit f6bcb4c7f366905b66ce8ffca7190118244bb642 upstream.
+
+This code will leak "map->debugfs_name" because the if statement is
+reversed so it only frees NULL pointers instead of non-NULL.  In
+fact the if statement is not required and should just be removed
+because kfree() accepts NULL pointers.
+
+Fixes: cffa4b2122f5 ("regmap: debugfs: Fix a memory leak when calling regmap_attach_dev")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Link: https://lore.kernel.org/r/X/RQpfAwRdLg0GqQ@mwanda
+Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ drivers/base/regmap/regmap-debugfs.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/drivers/base/regmap/regmap-debugfs.c b/drivers/base/regmap/regmap-debugfs.c
+index 08d929f77..c9e5381a8 100644
+--- a/drivers/base/regmap/regmap-debugfs.c
++++ b/drivers/base/regmap/regmap-debugfs.c
+@@ -591,9 +591,7 @@ void regmap_debugfs_init(struct regmap *map, const char *name)
+ 	}
+ 
+ 	if (!strcmp(name, "dummy")) {
+-		if (!map->debugfs_name)
+-			kfree(map->debugfs_name);
+-
++		kfree(map->debugfs_name);
+ 		map->debugfs_name = kasprintf(GFP_KERNEL, "dummy%d",
+ 						dummy_index);
+ 		if (!map->debugfs_name)
+-- 
+2.43.0
+

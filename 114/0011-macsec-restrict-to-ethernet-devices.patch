@@ -1,0 +1,49 @@
+From 4280452cef2ce3aa481e0bb00094b0ac9e54869f Mon Sep 17 00:00:00 2001
+From: Willem de Bruijn <willemb@google.com>
+Date: Sun, 22 Mar 2020 13:51:13 -0400
+Subject: [PATCH 011/116] macsec: restrict to ethernet devices
+
+[ Upstream commit b06d072ccc4b1acd0147b17914b7ad1caa1818bb ]
+
+Only attach macsec to ethernet devices.
+
+Syzbot was able to trigger a KMSAN warning in macsec_handle_frame
+by attaching to a phonet device.
+
+Macvlan has a similar check in macvlan_port_create.
+
+v1->v2
+  - fix commit message typo
+
+Reported-by: syzbot <syzkaller@googlegroups.com>
+Signed-off-by: Willem de Bruijn <willemb@google.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ drivers/net/macsec.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/drivers/net/macsec.c b/drivers/net/macsec.c
+index 9a8ec94e8..df7d6de7c 100644
+--- a/drivers/net/macsec.c
++++ b/drivers/net/macsec.c
+@@ -20,6 +20,7 @@
+ #include <net/genetlink.h>
+ #include <net/sock.h>
+ #include <net/gro_cells.h>
++#include <linux/if_arp.h>
+ 
+ #include <uapi/linux/if_macsec.h>
+ 
+@@ -3248,6 +3249,8 @@ static int macsec_newlink(struct net *net, struct net_device *dev,
+ 	real_dev = __dev_get_by_index(net, nla_get_u32(tb[IFLA_LINK]));
+ 	if (!real_dev)
+ 		return -ENODEV;
++	if (real_dev->type != ARPHRD_ETHER)
++		return -EINVAL;
+ 
+ 	dev->priv_flags |= IFF_MACSEC;
+ 
+-- 
+2.43.0
+

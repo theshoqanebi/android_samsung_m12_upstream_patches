@@ -1,0 +1,37 @@
+From 2699428d840e7d8d4622d79b96e4741d94105eb5 Mon Sep 17 00:00:00 2001
+From: Dinghao Liu <dinghao.liu@zju.edu.cn>
+Date: Tue, 5 Jan 2021 13:18:37 +0800
+Subject: [PATCH 35/44] iommu/intel: Fix memleak in intel_irq_remapping_alloc
+
+commit ff2b46d7cff80d27d82f7f3252711f4ca1666129 upstream.
+
+When irq_domain_get_irq_data() or irqd_cfg() fails
+at i == 0, data allocated by kzalloc() has not been
+freed before returning, which leads to memleak.
+
+Fixes: b106ee63abcc ("irq_remapping/vt-d: Enhance Intel IR driver to support hierarchical irqdomains")
+Signed-off-by: Dinghao Liu <dinghao.liu@zju.edu.cn>
+Acked-by: Lu Baolu <baolu.lu@linux.intel.com>
+Link: https://lore.kernel.org/r/20210105051837.32118-1-dinghao.liu@zju.edu.cn
+Signed-off-by: Will Deacon <will@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ drivers/iommu/intel_irq_remapping.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/iommu/intel_irq_remapping.c b/drivers/iommu/intel_irq_remapping.c
+index 9d2d03545..cd2e5b441 100644
+--- a/drivers/iommu/intel_irq_remapping.c
++++ b/drivers/iommu/intel_irq_remapping.c
+@@ -1373,6 +1373,8 @@ static int intel_irq_remapping_alloc(struct irq_domain *domain,
+ 		irq_data = irq_domain_get_irq_data(domain, virq + i);
+ 		irq_cfg = irqd_cfg(irq_data);
+ 		if (!irq_data || !irq_cfg) {
++			if (!i)
++				kfree(data);
+ 			ret = -EINVAL;
+ 			goto out_free_data;
+ 		}
+-- 
+2.43.0
+

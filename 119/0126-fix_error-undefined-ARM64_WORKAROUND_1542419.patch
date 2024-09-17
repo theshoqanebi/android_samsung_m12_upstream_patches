@@ -1,0 +1,28 @@
+From f4d9e78b703084f2e84299ecaef68cc99d294482 Mon Sep 17 00:00:00 2001
+From: theshoqanebi <husseinshoqanebi@gmail.com>
+Date: Wed, 8 Nov 2023 12:35:05 +0300
+Subject: [PATCH 126/128] fix_error: undefined ARM64_WORKAROUND_1542419
+
+---
+ arch/arm64/include/asm/cpucaps.h | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/arch/arm64/include/asm/cpucaps.h b/arch/arm64/include/asm/cpucaps.h
+index 8347e7c08..4038f90e8 100644
+--- a/arch/arm64/include/asm/cpucaps.h
++++ b/arch/arm64/include/asm/cpucaps.h
+@@ -53,8 +53,8 @@
+ #define ARM64_HAS_STAGE2_FWB			32
+ #define ARM64_WORKAROUND_1463225		33
+ #define ARM64_SSBS				34
+-#define ARM64_SPECTRE_BHB			36
+-
+-#define ARM64_NCAPS				35
++#define ARM64_SPECTRE_BHB			35
++#define ARM64_WORKAROUND_1542419		37
++#define ARM64_NCAPS				36
+ 
+ #endif /* __ASM_CPUCAPS_H */
+-- 
+2.43.0
+

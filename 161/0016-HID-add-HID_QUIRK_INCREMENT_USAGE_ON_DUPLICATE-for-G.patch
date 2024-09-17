@@ -1,0 +1,52 @@
+From 4fcf08cdc687aa32c35ace5f5dd118874a05dcc4 Mon Sep 17 00:00:00 2001
+From: Chris Ye <lzye@google.com>
+Date: Sun, 1 Nov 2020 11:34:52 -0800
+Subject: [PATCH 16/55] HID: add HID_QUIRK_INCREMENT_USAGE_ON_DUPLICATE for
+ Gamevice devices
+
+[ Upstream commit f59ee399de4a8ca4d7d19cdcabb4b63e94867f09 ]
+
+Kernel 5.4 introduces HID_QUIRK_INCREMENT_USAGE_ON_DUPLICATE, devices need to
+be set explicitly with this flag.
+
+Signed-off-by: Chris Ye <lzye@google.com>
+Signed-off-by: Jiri Kosina <jkosina@suse.cz>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/hid/hid-ids.h    | 4 ++++
+ drivers/hid/hid-quirks.c | 4 ++++
+ 2 files changed, 8 insertions(+)
+
+diff --git a/drivers/hid/hid-ids.h b/drivers/hid/hid-ids.h
+index 7ecb8b42c..682430c24 100644
+--- a/drivers/hid/hid-ids.h
++++ b/drivers/hid/hid-ids.h
+@@ -448,6 +448,10 @@
+ #define USB_DEVICE_ID_GAMEVICE_GV186	  0x0BBE
+ #define USB_DEVICE_ID_GAMEVICE_KISHI	  0x0BBF
+ 
++#define USB_VENDOR_ID_GAMEVICE	0x27F8
++#define USB_DEVICE_ID_GAMEVICE_GV186	0x0BBE
++#define USB_DEVICE_ID_GAMEVICE_KISHI	0x0BBF
++
+ #define USB_VENDOR_ID_GAMERON		0x0810
+ #define USB_DEVICE_ID_GAMERON_DUAL_PSX_ADAPTOR	0x0001
+ #define USB_DEVICE_ID_GAMERON_DUAL_PCS_ADAPTOR	0x0002
+diff --git a/drivers/hid/hid-quirks.c b/drivers/hid/hid-quirks.c
+index 543159eba..fcf5c4df5 100644
+--- a/drivers/hid/hid-quirks.c
++++ b/drivers/hid/hid-quirks.c
+@@ -87,6 +87,10 @@ static const struct hid_device_id hid_quirks[] = {
+ 	{ HID_USB_DEVICE(USB_VENDOR_ID_FUTABA, USB_DEVICE_ID_LED_DISPLAY), HID_QUIRK_NO_INIT_REPORTS },
+ 	{ HID_USB_DEVICE(USB_VENDOR_ID_GREENASIA, USB_DEVICE_ID_GREENASIA_DUAL_SAT_ADAPTOR), HID_QUIRK_MULTI_INPUT },
+ 	{ HID_USB_DEVICE(USB_VENDOR_ID_GREENASIA, USB_DEVICE_ID_GREENASIA_DUAL_USB_JOYPAD), HID_QUIRK_MULTI_INPUT },
++	{ HID_BLUETOOTH_DEVICE(USB_VENDOR_ID_GAMEVICE, USB_DEVICE_ID_GAMEVICE_GV186),
++		HID_QUIRK_INCREMENT_USAGE_ON_DUPLICATE },
++	{ HID_USB_DEVICE(USB_VENDOR_ID_GAMEVICE, USB_DEVICE_ID_GAMEVICE_KISHI),
++		HID_QUIRK_INCREMENT_USAGE_ON_DUPLICATE },
+ 	{ HID_BLUETOOTH_DEVICE(USB_VENDOR_ID_GAMEVICE, USB_DEVICE_ID_GAMEVICE_GV186),
+ 		HID_QUIRK_INCREMENT_USAGE_ON_DUPLICATE },
+ 	{ HID_USB_DEVICE(USB_VENDOR_ID_GAMEVICE, USB_DEVICE_ID_GAMEVICE_KISHI),
+-- 
+2.43.0
+

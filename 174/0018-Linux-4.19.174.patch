@@ -1,0 +1,31 @@
+From 11b1a67d02438b1f9e1841e74fd66d53c5964c07 Mon Sep 17 00:00:00 2001
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Date: Sun, 7 Feb 2021 14:48:38 +0100
+Subject: [PATCH 18/18] Linux 4.19.174
+
+Tested-by: Pavel Machek (CIP) <pavel@denx.de>
+Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
+Tested-by: Guenter Roeck <linux@roeck-us.net>
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
+Link: https://lore.kernel.org/r/20210205140649.825180779@linuxfoundation.org
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Makefile b/Makefile
+index d4fd9d76a..e80b0143f 100644
+--- a/Makefile
++++ b/Makefile
+@@ -1,7 +1,7 @@
+ # SPDX-License-Identifier: GPL-2.0
+ VERSION = 4
+ PATCHLEVEL = 19
+-SUBLEVEL = 173
++SUBLEVEL = 174
+ EXTRAVERSION =
+ NAME = "People's Front"
+ 
+-- 
+2.43.0
+

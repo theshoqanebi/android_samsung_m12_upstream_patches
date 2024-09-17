@@ -1,0 +1,64 @@
+From b0f99eb6e24f2c77c024a7e735d3506276a7cebb Mon Sep 17 00:00:00 2001
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Tue, 24 Mar 2020 19:07:56 +0100
+Subject: [PATCH 001/116] mmc: core: Allow host controllers to require R1B for
+ CMD6
+
+[ Upstream commit 1292e3efb149ee21d8d33d725eeed4e6b1ade963 ]
+
+It has turned out that some host controllers can't use R1B for CMD6 and
+other commands that have R1B associated with them. Therefore invent a new
+host cap, MMC_CAP_NEED_RSP_BUSY to let them specify this.
+
+In __mmc_switch(), let's check the flag and use it to prevent R1B responses
+from being converted into R1. Note that, this also means that the host are
+on its own, when it comes to manage the busy timeout.
+
+Suggested-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+Cc: <stable@vger.kernel.org>
+Tested-by: Anders Roxell <anders.roxell@linaro.org>
+Tested-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+Tested-by: Faiz Abbas <faiz_abbas@ti.com>
+Tested-By: Peter Geis <pgwipeout@gmail.com>
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/mmc/core/mmc_ops.c | 8 +++++---
+ include/linux/mmc/host.h   | 1 +
+ 2 files changed, 6 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/mmc/core/mmc_ops.c b/drivers/mmc/core/mmc_ops.c
+index 575529273..97bfb4207 100644
+--- a/drivers/mmc/core/mmc_ops.c
++++ b/drivers/mmc/core/mmc_ops.c
+@@ -536,10 +536,12 @@ int __mmc_switch(struct mmc_card *card, u8 set, u8 index, u8 value,
+ 	 * If the cmd timeout and the max_busy_timeout of the host are both
+ 	 * specified, let's validate them. A failure means we need to prevent
+ 	 * the host from doing hw busy detection, which is done by converting
+-	 * to a R1 response instead of a R1B.
++	 * to a R1 response instead of a R1B. Note, some hosts requires R1B,
++	 * which also means they are on their own when it comes to deal with the
++	 * busy timeout.
+ 	 */
+-	if (timeout_ms && host->max_busy_timeout &&
+-		(timeout_ms > host->max_busy_timeout))
++	if (!(host->caps & MMC_CAP_NEED_RSP_BUSY) && timeout_ms &&
++	    host->max_busy_timeout && (timeout_ms > host->max_busy_timeout))
+ 		use_r1b_resp = false;
+ 
+ 	cmd.opcode = MMC_SWITCH;
+diff --git a/include/linux/mmc/host.h b/include/linux/mmc/host.h
+index 01339a052..6166da551 100644
+--- a/include/linux/mmc/host.h
++++ b/include/linux/mmc/host.h
+@@ -332,6 +332,7 @@ struct mmc_host {
+ #define MMC_CAP_AGGRESSIVE_PM	(1 << 7)	/* Suspend (e)MMC/SD at idle  */
+ #define MMC_CAP_NONREMOVABLE	(1 << 8)	/* Nonremovable e.g. eMMC */
+ #define MMC_CAP_WAIT_WHILE_BUSY	(1 << 9)	/* Waits while card is busy */
++#define MMC_CAP_NEED_RSP_BUSY	(1 << 22)	/* Commands with R1B can't use R1. */
+ #define MMC_CAP_ERASE		(1 << 10)	/* Allow erase/trim commands */
+ #define MMC_CAP_3_3V_DDR	(1 << 11)	/* Host supports eMMC DDR 3.3V */
+ #define MMC_CAP_1_8V_DDR	(1 << 12)	/* Host supports eMMC DDR 1.8V */
+-- 
+2.43.0
+

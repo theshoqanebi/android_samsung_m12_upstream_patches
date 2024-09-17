@@ -1,0 +1,32 @@
+From f577adacc732bb180db3f8089f23be55992d4dec Mon Sep 17 00:00:00 2001
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Date: Sun, 17 Jan 2021 14:04:23 +0100
+Subject: [PATCH 44/44] Linux 4.19.168
+
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
+Tested-by: Shuah Khan <skhan@linuxfoundation.org>
+Tested-by: Guenter Roeck <linux@roeck-us.net>
+Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
+Tested-by: Pavel Machek (CIP) <pavel@denx.de>
+Link: https://lore.kernel.org/r/20210115121957.037407908@linuxfoundation.org
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Makefile b/Makefile
+index 4ffe73731..f87c452e7 100644
+--- a/Makefile
++++ b/Makefile
+@@ -1,7 +1,7 @@
+ # SPDX-License-Identifier: GPL-2.0
+ VERSION = 4
+ PATCHLEVEL = 19
+-SUBLEVEL = 167
++SUBLEVEL = 168
+ EXTRAVERSION =
+ NAME = "People's Front"
+ 
+-- 
+2.43.0
+

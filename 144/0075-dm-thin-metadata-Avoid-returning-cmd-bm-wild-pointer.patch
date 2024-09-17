@@ -1,0 +1,45 @@
+From 457780af8b3e249d6622d1e928f5ab66f105ada7 Mon Sep 17 00:00:00 2001
+From: Ye Bin <yebin10@huawei.com>
+Date: Tue, 1 Sep 2020 14:25:43 +0800
+Subject: [PATCH 75/86] dm thin metadata: Avoid returning cmd->bm wild pointer
+ on error
+
+commit 219403d7e56f9b716ad80ab87db85d29547ee73e upstream.
+
+Maybe __create_persistent_data_objects() caller will use PTR_ERR as a
+pointer, it will lead to some strange things.
+
+Signed-off-by: Ye Bin <yebin10@huawei.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Mike Snitzer <snitzer@redhat.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ drivers/md/dm-thin-metadata.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/md/dm-thin-metadata.c b/drivers/md/dm-thin-metadata.c
+index 6a26afcc1..85077f4d2 100644
+--- a/drivers/md/dm-thin-metadata.c
++++ b/drivers/md/dm-thin-metadata.c
+@@ -698,12 +698,16 @@ static int __create_persistent_data_objects(struct dm_pool_metadata *pmd, bool f
+ 					  THIN_MAX_CONCURRENT_LOCKS);
+ 	if (IS_ERR(pmd->bm)) {
+ 		DMERR("could not create block manager");
+-		return PTR_ERR(pmd->bm);
++		r = PTR_ERR(pmd->bm);
++		pmd->bm = NULL;
++		return r;
+ 	}
+ 
+ 	r = __open_or_format_metadata(pmd, format_device);
+-	if (r)
++	if (r) {
+ 		dm_block_manager_destroy(pmd->bm);
++		pmd->bm = NULL;
++	}
+ 
+ 	return r;
+ }
+-- 
+2.43.0
+

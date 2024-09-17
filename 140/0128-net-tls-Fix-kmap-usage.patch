@@ -1,0 +1,46 @@
+From 86c6ed0520debcd20ee93c16fa673deb95448022 Mon Sep 17 00:00:00 2001
+From: Ira Weiny <ira.weiny@intel.com>
+Date: Mon, 10 Aug 2020 17:02:58 -0700
+Subject: [PATCH 128/162] net/tls: Fix kmap usage
+
+[ Upstream commit b06c19d9f827f6743122795570bfc0c72db482b0 ]
+
+When MSG_OOB is specified to tls_device_sendpage() the mapped page is
+never unmapped.
+
+Hold off mapping the page until after the flags are checked and the page
+is actually needed.
+
+Fixes: e8f69799810c ("net/tls: Add generic NIC offload infrastructure")
+Signed-off-by: Ira Weiny <ira.weiny@intel.com>
+Reviewed-by: Jakub Kicinski <kuba@kernel.org>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ net/tls/tls_device.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/net/tls/tls_device.c b/net/tls/tls_device.c
+index 8f40bbfd6..575d62130 100644
+--- a/net/tls/tls_device.c
++++ b/net/tls/tls_device.c
+@@ -476,7 +476,7 @@ int tls_device_sendpage(struct sock *sk, struct page *page,
+ 			int offset, size_t size, int flags)
+ {
+ 	struct iov_iter	msg_iter;
+-	char *kaddr = kmap(page);
++	char *kaddr;
+ 	struct kvec iov;
+ 	int rc;
+ 
+@@ -490,6 +490,7 @@ int tls_device_sendpage(struct sock *sk, struct page *page,
+ 		goto out;
+ 	}
+ 
++	kaddr = kmap(page);
+ 	iov.iov_base = kaddr + offset;
+ 	iov.iov_len = size;
+ 	iov_iter_kvec(&msg_iter, WRITE | ITER_KVEC, &iov, 1, size);
+-- 
+2.43.0
+

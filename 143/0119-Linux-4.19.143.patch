@@ -1,0 +1,29 @@
+From 90c0952b06f7756a870f17d8c86b071125fe769d Mon Sep 17 00:00:00 2001
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Date: Thu, 3 Sep 2020 11:24:31 +0200
+Subject: [PATCH 119/119] Linux 4.19.143
+
+Tested-by: Shuah Khan <skhan@linuxfoundation.org>
+Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
+Tested-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Makefile b/Makefile
+index 2c379e9cf..2018935aa 100644
+--- a/Makefile
++++ b/Makefile
+@@ -1,7 +1,7 @@
+ # SPDX-License-Identifier: GPL-2.0
+ VERSION = 4
+ PATCHLEVEL = 19
+-SUBLEVEL = 142
++SUBLEVEL = 143
+ EXTRAVERSION =
+ NAME = "People's Front"
+ 
+-- 
+2.43.0
+

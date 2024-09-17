@@ -1,0 +1,40 @@
+From ce08953f15af33678084a72d48d21743c23a01d5 Mon Sep 17 00:00:00 2001
+From: Miaohe Lin <linmiaohe@huawei.com>
+Date: Thu, 28 Nov 2019 14:38:48 +0800
+Subject: [PATCH 044/240] KVM: arm/arm64: vgic: Fix potential double free
+ dist->spis in __kvm_vgic_destroy()
+
+[ Upstream commit 0bda9498dd45280e334bfe88b815ebf519602cc3 ]
+
+In kvm_vgic_dist_init() called from kvm_vgic_map_resources(), if
+dist->vgic_model is invalid, dist->spis will be freed without set
+dist->spis = NULL. And in vgicv2 resources clean up path,
+__kvm_vgic_destroy() will be called to free allocated resources.
+And dist->spis will be freed again in clean up chain because we
+forget to set dist->spis = NULL in kvm_vgic_dist_init() failed
+path. So double free would happen.
+
+Signed-off-by: Miaohe Lin <linmiaohe@huawei.com>
+Signed-off-by: Marc Zyngier <maz@kernel.org>
+Reviewed-by: Eric Auger <eric.auger@redhat.com>
+Link: https://lore.kernel.org/r/1574923128-19956-1-git-send-email-linmiaohe@huawei.com
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ virt/kvm/arm/vgic/vgic-init.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/virt/kvm/arm/vgic/vgic-init.c b/virt/kvm/arm/vgic/vgic-init.c
+index cd75df25f..2fc1777da 100644
+--- a/virt/kvm/arm/vgic/vgic-init.c
++++ b/virt/kvm/arm/vgic/vgic-init.c
+@@ -187,6 +187,7 @@ static int kvm_vgic_dist_init(struct kvm *kvm, unsigned int nr_spis)
+ 			break;
+ 		default:
+ 			kfree(dist->spis);
++			dist->spis = NULL;
+ 			return -EINVAL;
+ 		}
+ 	}
+-- 
+2.43.0
+

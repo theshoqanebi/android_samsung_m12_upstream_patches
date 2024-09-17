@@ -1,0 +1,51 @@
+From 9ab8856bce5845f6eab2ba961f5fad2e9d7e01d5 Mon Sep 17 00:00:00 2001
+From: Qinglang Miao <miaoqinglang@huawei.com>
+Date: Fri, 30 Oct 2020 09:34:24 +0800
+Subject: [PATCH 068/333] drm/tegra: sor: Disable clocks on error in
+ tegra_sor_init()
+
+[ Upstream commit bf3a3cdcad40e5928a22ea0fd200d17fd6d6308d ]
+
+Fix the missing clk_disable_unprepare() before return from
+tegra_sor_init() in the error handling case.
+
+Signed-off-by: Qinglang Miao <miaoqinglang@huawei.com>
+Signed-off-by: Thierry Reding <treding@nvidia.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/gpu/drm/tegra/sor.c | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/gpu/drm/tegra/sor.c b/drivers/gpu/drm/tegra/sor.c
+index 89cb70da2..83108e243 100644
+--- a/drivers/gpu/drm/tegra/sor.c
++++ b/drivers/gpu/drm/tegra/sor.c
+@@ -2668,17 +2668,23 @@ static int tegra_sor_init(struct host1x_client *client)
+ 		if (err < 0) {
+ 			dev_err(sor->dev, "failed to deassert SOR reset: %d\n",
+ 				err);
++			clk_disable_unprepare(sor->clk);
+ 			return err;
+ 		}
+ 	}
+ 
+ 	err = clk_prepare_enable(sor->clk_safe);
+-	if (err < 0)
++	if (err < 0) {
++		clk_disable_unprepare(sor->clk);
+ 		return err;
++	}
+ 
+ 	err = clk_prepare_enable(sor->clk_dp);
+-	if (err < 0)
++	if (err < 0) {
++		clk_disable_unprepare(sor->clk_safe);
++		clk_disable_unprepare(sor->clk);
+ 		return err;
++	}
+ 
+ 	return 0;
+ }
+-- 
+2.43.0
+

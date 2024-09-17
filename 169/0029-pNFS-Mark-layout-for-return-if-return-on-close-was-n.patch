@@ -1,0 +1,44 @@
+From 980b0a0aa932effda7bfb01396700f7f287b4cb3 Mon Sep 17 00:00:00 2001
+From: Trond Myklebust <trond.myklebust@hammerspace.com>
+Date: Mon, 4 Jan 2021 13:35:46 -0500
+Subject: [PATCH 29/43] pNFS: Mark layout for return if return-on-close was not
+ sent
+
+commit 67bbceedc9bb8ad48993a8bd6486054756d711f4 upstream.
+
+If the layout return-on-close failed because the layoutreturn was never
+sent, then we should mark the layout for return again.
+
+Fixes: 9c47b18cf722 ("pNFS: Ensure we do clear the return-on-close layout stateid on fatal errors")
+Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ fs/nfs/pnfs.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/fs/nfs/pnfs.c b/fs/nfs/pnfs.c
+index a253384a4..d072fce91 100644
+--- a/fs/nfs/pnfs.c
++++ b/fs/nfs/pnfs.c
+@@ -1460,12 +1460,18 @@ void pnfs_roc_release(struct nfs4_layoutreturn_args *args,
+ 		int ret)
+ {
+ 	struct pnfs_layout_hdr *lo = args->layout;
++	struct inode *inode = args->inode;
+ 	const nfs4_stateid *arg_stateid = NULL;
+ 	const nfs4_stateid *res_stateid = NULL;
+ 	struct nfs4_xdr_opaque_data *ld_private = args->ld_private;
+ 
+ 	switch (ret) {
+ 	case -NFS4ERR_NOMATCHING_LAYOUT:
++		spin_lock(&inode->i_lock);
++		if (pnfs_layout_is_valid(lo) &&
++		    nfs4_stateid_match_other(&args->stateid, &lo->plh_stateid))
++			pnfs_set_plh_return_info(lo, args->range.iomode, 0);
++		spin_unlock(&inode->i_lock);
+ 		break;
+ 	case 0:
+ 		if (res->lrs_present)
+-- 
+2.43.0
+

@@ -1,0 +1,44 @@
+From fa25a9f62f49a6f409492209381fad2cb94bd84a Mon Sep 17 00:00:00 2001
+From: Liu Jian <liujian56@huawei.com>
+Date: Fri, 17 Jul 2020 17:01:21 +0800
+Subject: [PATCH 30/86] ieee802154: fix one possible memleak in adf7242_probe
+
+[ Upstream commit 66673f96f0f968b991dc38be06102246919c663c ]
+
+When probe fail, we should destroy the workqueue.
+
+Fixes: 2795e8c25161 ("net: ieee802154: fix a potential NULL pointer dereference")
+Signed-off-by: Liu Jian <liujian56@huawei.com>
+Acked-by: Michael Hennerich <michael.hennerich@analog.com>
+Link: https://lore.kernel.org/r/20200717090121.2143-1-liujian56@huawei.com
+Signed-off-by: Stefan Schmidt <stefan@datenfreihafen.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/net/ieee802154/adf7242.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/net/ieee802154/adf7242.c b/drivers/net/ieee802154/adf7242.c
+index cd6b95e67..71be8524c 100644
+--- a/drivers/net/ieee802154/adf7242.c
++++ b/drivers/net/ieee802154/adf7242.c
+@@ -1270,7 +1270,7 @@ static int adf7242_probe(struct spi_device *spi)
+ 					     WQ_MEM_RECLAIM);
+ 	if (unlikely(!lp->wqueue)) {
+ 		ret = -ENOMEM;
+-		goto err_hw_init;
++		goto err_alloc_wq;
+ 	}
+ 
+ 	ret = adf7242_hw_init(lp);
+@@ -1302,6 +1302,8 @@ static int adf7242_probe(struct spi_device *spi)
+ 	return ret;
+ 
+ err_hw_init:
++	destroy_workqueue(lp->wqueue);
++err_alloc_wq:
+ 	mutex_destroy(&lp->bmux);
+ 	ieee802154_free_hw(lp->hw);
+ 
+-- 
+2.43.0
+

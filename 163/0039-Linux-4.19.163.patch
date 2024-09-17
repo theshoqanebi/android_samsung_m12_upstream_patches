@@ -1,0 +1,32 @@
+From c0b45f7057c018a892c348154ac4d14381b70994 Mon Sep 17 00:00:00 2001
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Date: Fri, 11 Dec 2020 13:25:04 +0100
+Subject: [PATCH 39/39] Linux 4.19.163
+
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
+Tested-by: Pavel Machek (CIP) <pavel@denx.de>
+Tested-by: Shuah Khan <skhan@linuxfoundation.org>
+Tested-by: Guenter Roeck <linux@roeck-us.net>
+Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
+Link: https://lore.kernel.org/r/20201210142602.272595094@linuxfoundation.org
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Makefile b/Makefile
+index 49bdfd912..e4b7be237 100644
+--- a/Makefile
++++ b/Makefile
+@@ -1,7 +1,7 @@
+ # SPDX-License-Identifier: GPL-2.0
+ VERSION = 4
+ PATCHLEVEL = 19
+-SUBLEVEL = 162
++SUBLEVEL = 163
+ EXTRAVERSION =
+ NAME = "People's Front"
+ 
+-- 
+2.43.0
+

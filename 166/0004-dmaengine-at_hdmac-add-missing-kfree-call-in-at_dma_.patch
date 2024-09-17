@@ -1,0 +1,36 @@
+From 8251e08e790c6bf9c104398d8a1af2b68c789edb Mon Sep 17 00:00:00 2001
+From: Yu Kuai <yukuai3@huawei.com>
+Date: Mon, 17 Aug 2020 19:57:28 +0800
+Subject: [PATCH 4/9] dmaengine: at_hdmac: add missing kfree() call in
+ at_dma_xlate()
+
+commit e097eb7473d9e70da9e03276f61cd392ccb9d79f upstream.
+
+If memory allocation for 'atslave' succeed, at_dma_xlate() doesn't have a
+corresponding kfree() in exception handling. Thus add kfree() for this
+function implementation.
+
+Fixes: bbe89c8e3d59 ("at_hdmac: move to generic DMA binding")
+Signed-off-by: Yu Kuai <yukuai3@huawei.com>
+Link: https://lore.kernel.org/r/20200817115728.1706719-4-yukuai3@huawei.com
+Signed-off-by: Vinod Koul <vkoul@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ drivers/dma/at_hdmac.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/dma/at_hdmac.c b/drivers/dma/at_hdmac.c
+index ff3f996c1..c0a8dc39f 100644
+--- a/drivers/dma/at_hdmac.c
++++ b/drivers/dma/at_hdmac.c
+@@ -1719,6 +1719,7 @@ static struct dma_chan *at_dma_xlate(struct of_phandle_args *dma_spec,
+ 	chan = dma_request_channel(mask, at_dma_filter, atslave);
+ 	if (!chan) {
+ 		put_device(&dmac_pdev->dev);
++		kfree(atslave);
+ 		return NULL;
+ 	}
+ 
+-- 
+2.43.0
+

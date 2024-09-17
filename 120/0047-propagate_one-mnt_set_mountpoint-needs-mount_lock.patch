@@ -1,0 +1,57 @@
+From c57da08ddf046763fc3c7faf7fd9233848db3d92 Mon Sep 17 00:00:00 2001
+From: Al Viro <viro@zeniv.linux.org.uk>
+Date: Mon, 27 Apr 2020 10:26:22 -0400
+Subject: [PATCH 47/48] propagate_one(): mnt_set_mountpoint() needs mount_lock
+
+commit b0d3869ce9eeacbb1bbd541909beeef4126426d5 upstream.
+
+... to protect the modification of mp->m_count done by it.  Most of
+the places that modify that thing also have namespace_lock held,
+but not all of them can do so, so we really need mount_lock here.
+Kudos to Piotr Krysiuk <piotras@gmail.com>, who'd spotted a related
+bug in pivot_root(2) (fixed unnoticed in 5.3); search for other
+similar turds has caught out this one.
+
+Cc: stable@kernel.org
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+Signed-off-by: Piotr Krysiuk <piotras@gmail.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ fs/pnode.c | 11 +++++------
+ 1 file changed, 5 insertions(+), 6 deletions(-)
+
+diff --git a/fs/pnode.c b/fs/pnode.c
+index 4b17adc10..730419ca1 100644
+--- a/fs/pnode.c
++++ b/fs/pnode.c
+@@ -279,7 +279,7 @@ static int propagate_one(struct mount *m)
+ 		if (IS_MNT_SHARED(m))
+ 			type |= CL_MAKE_SHARED;
+ 	}
+-		
++
+ 	/* Notice when we are propagating across user namespaces */
+ 	if (m->mnt_ns->user_ns != user_ns)
+ 		type |= CL_UNPRIVILEGED;
+@@ -295,14 +295,13 @@ static int propagate_one(struct mount *m)
+ #else
+ 	child->mnt.mnt_flags &= ~MNT_LOCKED;
+ #endif
++	read_seqlock_excl(&mount_lock);
+ 	mnt_set_mountpoint(m, mp, child);
++	if (m->mnt_master != dest_master)
++		SET_MNT_MARK(m->mnt_master);
++	read_sequnlock_excl(&mount_lock);
+ 	last_dest = m;
+ 	last_source = child;
+-	if (m->mnt_master != dest_master) {
+-		read_seqlock_excl(&mount_lock);
+-		SET_MNT_MARK(m->mnt_master);
+-		read_sequnlock_excl(&mount_lock);
+-	}
+ 	hlist_add_head(&child->mnt_hash, list);
+ 	return count_mounts(m->mnt_ns, child);
+ }
+-- 
+2.43.0
+

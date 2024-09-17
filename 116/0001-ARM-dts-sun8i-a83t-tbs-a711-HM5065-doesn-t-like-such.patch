@@ -1,0 +1,36 @@
+From 26748335a62a680b1f797f6079c0a46b587769ef Mon Sep 17 00:00:00 2001
+From: Ondrej Jirman <megous@megous.com>
+Date: Sat, 22 Feb 2020 23:31:52 +0100
+Subject: [PATCH 001/143] ARM: dts: sun8i-a83t-tbs-a711: HM5065 doesn't like
+ such a high voltage
+
+[ Upstream commit a40550952c000667b20082d58077bc647da6c890 ]
+
+Lowering the voltage solves the quick image degradation over time
+(minutes), that was probably caused by overheating.
+
+Signed-off-by: Ondrej Jirman <megous@megous.com>
+Signed-off-by: Maxime Ripard <maxime@cerno.tech>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ arch/arm/boot/dts/sun8i-a83t-tbs-a711.dts | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/arch/arm/boot/dts/sun8i-a83t-tbs-a711.dts b/arch/arm/boot/dts/sun8i-a83t-tbs-a711.dts
+index 49547a43c..54cbdaf7f 100644
+--- a/arch/arm/boot/dts/sun8i-a83t-tbs-a711.dts
++++ b/arch/arm/boot/dts/sun8i-a83t-tbs-a711.dts
+@@ -318,8 +318,8 @@
+ };
+ 
+ &reg_dldo3 {
+-	regulator-min-microvolt = <2800000>;
+-	regulator-max-microvolt = <2800000>;
++	regulator-min-microvolt = <1800000>;
++	regulator-max-microvolt = <1800000>;
+ 	regulator-name = "vdd-csi";
+ };
+ 
+-- 
+2.43.0
+

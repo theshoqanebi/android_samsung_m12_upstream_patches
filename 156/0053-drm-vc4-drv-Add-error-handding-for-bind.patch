@@ -1,0 +1,33 @@
+From 6a08d24fdb3c7ca9b046bffb1d890efacc6d7383 Mon Sep 17 00:00:00 2001
+From: Hoegeun Kwon <hoegeun.kwon@samsung.com>
+Date: Tue, 27 Oct 2020 13:14:42 +0900
+Subject: [PATCH 53/71] drm/vc4: drv: Add error handding for bind
+
+[ Upstream commit 9ce0af3e9573fb84c4c807183d13ea2a68271e4b ]
+
+There is a problem that if vc4_drm bind fails, a memory leak occurs on
+the drm_property_create side. Add error handding for drm_mode_config.
+
+Signed-off-by: Hoegeun Kwon <hoegeun.kwon@samsung.com>
+Signed-off-by: Maxime Ripard <maxime@cerno.tech>
+Link: https://patchwork.freedesktop.org/patch/msgid/20201027041442.30352-2-hoegeun.kwon@samsung.com
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/gpu/drm/vc4/vc4_drv.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/gpu/drm/vc4/vc4_drv.c b/drivers/gpu/drm/vc4/vc4_drv.c
+index 04270a14f..868dd1ef3 100644
+--- a/drivers/gpu/drm/vc4/vc4_drv.c
++++ b/drivers/gpu/drm/vc4/vc4_drv.c
+@@ -312,6 +312,7 @@ unbind_all:
+ 	component_unbind_all(dev, drm);
+ gem_destroy:
+ 	vc4_gem_destroy(drm);
++	drm_mode_config_cleanup(drm);
+ 	vc4_bo_cache_destroy(drm);
+ dev_put:
+ 	drm_dev_put(drm);
+-- 
+2.43.0
+

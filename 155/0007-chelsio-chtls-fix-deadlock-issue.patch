@@ -1,0 +1,43 @@
+From 1331074d7f964a91d0eb26076a65a2ea7bb708fa Mon Sep 17 00:00:00 2001
+From: Vinay Kumar Yadav <vinay.yadav@chelsio.com>
+Date: Mon, 26 Oct 2020 01:05:39 +0530
+Subject: [PATCH 007/185] chelsio/chtls: fix deadlock issue
+
+[ Upstream commit 28e9dcd9172028263c8225c15c4e329e08475e89 ]
+
+In chtls_pass_establish() we hold child socket lock using bh_lock_sock
+and we are again trying bh_lock_sock in add_to_reap_list, causing deadlock.
+Remove bh_lock_sock in add_to_reap_list() as lock is already held.
+
+Fixes: cc35c88ae4db ("crypto : chtls - CPL handler definition")
+Signed-off-by: Vinay Kumar Yadav <vinay.yadav@chelsio.com>
+Link: https://lore.kernel.org/r/20201025193538.31112-1-vinay.yadav@chelsio.com
+Signed-off-by: Jakub Kicinski <kuba@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ drivers/crypto/chelsio/chtls/chtls_cm.c | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/drivers/crypto/chelsio/chtls/chtls_cm.c b/drivers/crypto/chelsio/chtls/chtls_cm.c
+index f1ca66147..2b32f8d7c 100644
+--- a/drivers/crypto/chelsio/chtls/chtls_cm.c
++++ b/drivers/crypto/chelsio/chtls/chtls_cm.c
+@@ -1348,7 +1348,6 @@ static void add_to_reap_list(struct sock *sk)
+ 	struct chtls_sock *csk = sk->sk_user_data;
+ 
+ 	local_bh_disable();
+-	bh_lock_sock(sk);
+ 	release_tcp_port(sk); /* release the port immediately */
+ 
+ 	spin_lock(&reap_list_lock);
+@@ -1357,7 +1356,6 @@ static void add_to_reap_list(struct sock *sk)
+ 	if (!csk->passive_reap_next)
+ 		schedule_work(&reap_task);
+ 	spin_unlock(&reap_list_lock);
+-	bh_unlock_sock(sk);
+ 	local_bh_enable();
+ }
+ 
+-- 
+2.43.0
+

@@ -1,0 +1,40 @@
+From afa7c3a3e4f7062ab7071d3b691f06f3ef1dbcb9 Mon Sep 17 00:00:00 2001
+From: Rob Clark <robdclark@chromium.org>
+Date: Wed, 12 Aug 2020 17:03:09 -0700
+Subject: [PATCH 052/119] drm/msm/adreno: fix updating ring fence
+
+[ Upstream commit f228af11dfa1d1616bc67f3a4119ab77c36181f1 ]
+
+We need to set it to the most recent completed fence, not the most
+recent submitted.  Otherwise we have races where we think we can retire
+submits that the GPU is not finished with, if the GPU doesn't manage to
+overwrite the seqno before we look at it.
+
+This can show up with hang recovery if one of the submits after the
+crashing submit also hangs after it is replayed.
+
+Fixes: f97decac5f4c ("drm/msm: Support multiple ringbuffers")
+Signed-off-by: Rob Clark <robdclark@chromium.org>
+Reviewed-by: Jordan Crouse <jcrouse@codeaurora.org>
+Signed-off-by: Rob Clark <robdclark@chromium.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/gpu/drm/msm/adreno/adreno_gpu.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/msm/adreno/adreno_gpu.c b/drivers/gpu/drm/msm/adreno/adreno_gpu.c
+index 93d70f4a2..c9f831604 100644
+--- a/drivers/gpu/drm/msm/adreno/adreno_gpu.c
++++ b/drivers/gpu/drm/msm/adreno/adreno_gpu.c
+@@ -221,7 +221,7 @@ int adreno_hw_init(struct msm_gpu *gpu)
+ 		ring->next = ring->start;
+ 
+ 		/* reset completed fence seqno: */
+-		ring->memptrs->fence = ring->seqno;
++		ring->memptrs->fence = ring->fctx->completed_fence;
+ 		ring->memptrs->rptr = 0;
+ 	}
+ 
+-- 
+2.43.0
+

@@ -1,0 +1,42 @@
+From 0bf350c197ed874fc772960ba3653f1ac0cd7ab3 Mon Sep 17 00:00:00 2001
+From: Kai-Heng Feng <kai.heng.feng@canonical.com>
+Date: Wed, 5 Feb 2020 19:26:33 +0800
+Subject: [PATCH 20/65] USB: Disable LPM on WD19's Realtek Hub
+
+commit b63e48fb50e1ca71db301ca9082befa6f16c55c4 upstream.
+
+Realtek Hub (0bda:0x0487) used in Dell Dock WD19 sometimes drops off the
+bus when bringing underlying ports from U3 to U0.
+
+Disabling LPM on the hub during setting link state is not enough, so
+let's disable LPM completely for this hub.
+
+Acked-by: Alan Stern <stern@rowland.harvard.edu>
+Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+Cc: stable <stable@vger.kernel.org>
+Link: https://lore.kernel.org/r/20200205112633.25995-3-kai.heng.feng@canonical.com
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ drivers/usb/core/quirks.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/drivers/usb/core/quirks.c b/drivers/usb/core/quirks.c
+index aaddea019..91f263a68 100644
+--- a/drivers/usb/core/quirks.c
++++ b/drivers/usb/core/quirks.c
+@@ -384,6 +384,12 @@ static const struct usb_device_id usb_quirk_list[] = {
+ 	/* Generic RTL8153 based ethernet adapters */
+ 	{ USB_DEVICE(0x0bda, 0x8153), .driver_info = USB_QUIRK_NO_LPM },
+ 
++	/* Realtek hub in Dell WD19 (Type-C) */
++	{ USB_DEVICE(0x0bda, 0x0487), .driver_info = USB_QUIRK_NO_LPM },
++
++	/* Realtek hub in Dell WD19 (Type-C) */
++	{ USB_DEVICE(0x0bda, 0x0487), .driver_info = USB_QUIRK_NO_LPM },
++
+ 	/* Action Semiconductor flash disk */
+ 	{ USB_DEVICE(0x10d6, 0x2200), .driver_info =
+ 			USB_QUIRK_STRING_FETCH_255 },
+-- 
+2.43.0
+

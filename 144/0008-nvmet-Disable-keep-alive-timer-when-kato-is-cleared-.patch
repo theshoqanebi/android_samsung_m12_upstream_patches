@@ -1,0 +1,46 @@
+From ba09546c196c1892707aef9b10ae651283a2eb51 Mon Sep 17 00:00:00 2001
+From: Amit Engel <amit.engel@dell.com>
+Date: Wed, 19 Aug 2020 11:31:11 +0300
+Subject: [PATCH 08/86] nvmet: Disable keep-alive timer when kato is cleared to
+ 0h
+
+[ Upstream commit 0d3b6a8d213a30387b5104b2fb25376d18636f23 ]
+
+Based on nvme spec, when keep alive timeout is set to zero
+the keep-alive timer should be disabled.
+
+Signed-off-by: Amit Engel <amit.engel@dell.com>
+Signed-off-by: Sagi Grimberg <sagi@grimberg.me>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/nvme/target/core.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/drivers/nvme/target/core.c b/drivers/nvme/target/core.c
+index 776b7e9e2..f28df233d 100644
+--- a/drivers/nvme/target/core.c
++++ b/drivers/nvme/target/core.c
+@@ -307,6 +307,9 @@ static void nvmet_keep_alive_timer(struct work_struct *work)
+ 
+ static void nvmet_start_keep_alive_timer(struct nvmet_ctrl *ctrl)
+ {
++	if (unlikely(ctrl->kato == 0))
++		return;
++
+ 	pr_debug("ctrl %d start keep-alive timer for %d secs\n",
+ 		ctrl->cntlid, ctrl->kato);
+ 
+@@ -316,6 +319,9 @@ static void nvmet_start_keep_alive_timer(struct nvmet_ctrl *ctrl)
+ 
+ static void nvmet_stop_keep_alive_timer(struct nvmet_ctrl *ctrl)
+ {
++	if (unlikely(ctrl->kato == 0))
++		return;
++
+ 	pr_debug("ctrl %d stop keep-alive\n", ctrl->cntlid);
+ 
+ 	cancel_delayed_work_sync(&ctrl->ka_work);
+-- 
+2.43.0
+

@@ -1,0 +1,28 @@
+From e6287c873939159c72a612a90e94290529e5dd55 Mon Sep 17 00:00:00 2001
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Date: Wed, 26 Aug 2020 10:31:07 +0200
+Subject: [PATCH 71/71] Linux 4.19.142
+
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
+Tested-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Makefile b/Makefile
+index 9f97cd889..2c379e9cf 100644
+--- a/Makefile
++++ b/Makefile
+@@ -1,7 +1,7 @@
+ # SPDX-License-Identifier: GPL-2.0
+ VERSION = 4
+ PATCHLEVEL = 19
+-SUBLEVEL = 141
++SUBLEVEL = 142
+ EXTRAVERSION =
+ NAME = "People's Front"
+ 
+-- 
+2.43.0
+

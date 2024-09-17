@@ -1,0 +1,48 @@
+From 5c3325f8d48f2b72b4d325b8cd9fab9fbf2b5dde Mon Sep 17 00:00:00 2001
+From: Tom Rix <trix@redhat.com>
+Date: Wed, 10 Jun 2020 14:57:13 -0700
+Subject: [PATCH 172/206] selinux: fix double free
+
+commit 65de50969a77509452ae590e9449b70a22b923bb upstream.
+
+Clang's static analysis tool reports these double free memory errors.
+
+security/selinux/ss/services.c:2987:4: warning: Attempt to free released memory [unix.Malloc]
+                        kfree(bnames[i]);
+                        ^~~~~~~~~~~~~~~~
+security/selinux/ss/services.c:2990:2: warning: Attempt to free released memory [unix.Malloc]
+        kfree(bvalues);
+        ^~~~~~~~~~~~~~
+
+So improve the security_get_bools error handling by freeing these variables
+and setting their return pointers to NULL and the return len to 0
+
+Cc: stable@vger.kernel.org
+Signed-off-by: Tom Rix <trix@redhat.com>
+Acked-by: Stephen Smalley <stephen.smalley.work@gmail.com>
+Signed-off-by: Paul Moore <paul@paul-moore.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ security/selinux/ss/services.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/security/selinux/ss/services.c b/security/selinux/ss/services.c
+index dae351b9c..3e4a4a351 100644
+--- a/security/selinux/ss/services.c
++++ b/security/selinux/ss/services.c
+@@ -2936,8 +2936,12 @@ err:
+ 	if (*names) {
+ 		for (i = 0; i < *len; i++)
+ 			kfree((*names)[i]);
++		kfree(*names);
+ 	}
+ 	kfree(*values);
++	*len = 0;
++	*names = NULL;
++	*values = NULL;
+ 	goto out;
+ }
+ 
+-- 
+2.43.0
+

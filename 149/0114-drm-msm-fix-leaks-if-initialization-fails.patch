@@ -1,0 +1,36 @@
+From 2e85eb45b5bbc3947119751f9af09f4cb06f0749 Mon Sep 17 00:00:00 2001
+From: Pavel Machek <pavel@denx.de>
+Date: Mon, 9 Mar 2020 11:14:10 +0100
+Subject: [PATCH 114/240] drm/msm: fix leaks if initialization fails
+
+[ Upstream commit 66be340f827554cb1c8a1ed7dea97920b4085af2 ]
+
+We should free resources in unlikely case of allocation failure.
+
+Signed-off-by: Pavel Machek <pavel@denx.de>
+Signed-off-by: Rob Clark <robdclark@chromium.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/gpu/drm/msm/msm_drv.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/gpu/drm/msm/msm_drv.c b/drivers/gpu/drm/msm/msm_drv.c
+index 7f45486b6..3ba3ae974 100644
+--- a/drivers/gpu/drm/msm/msm_drv.c
++++ b/drivers/gpu/drm/msm/msm_drv.c
+@@ -495,8 +495,10 @@ static int msm_drm_init(struct device *dev, struct drm_driver *drv)
+ 	if (!dev->dma_parms) {
+ 		dev->dma_parms = devm_kzalloc(dev, sizeof(*dev->dma_parms),
+ 					      GFP_KERNEL);
+-		if (!dev->dma_parms)
+-			return -ENOMEM;
++		if (!dev->dma_parms) {
++			ret = -ENOMEM;
++			goto err_msm_uninit;
++		}
+ 	}
+ 	dma_set_max_seg_size(dev, DMA_BIT_MASK(32));
+ 
+-- 
+2.43.0
+

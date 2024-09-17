@@ -1,0 +1,33 @@
+From c16f666780ba35c3c15afa6ddc6100f70bc126a5 Mon Sep 17 00:00:00 2001
+From: Olaf Hering <olaf@aepfle.de>
+Date: Sun, 11 Oct 2020 20:54:31 +0200
+Subject: [PATCH 42/43] kbuild: enforce -Werror=return-type
+
+commit 172aad81a882443eefe1bd860c4eddc81b14dd5b upstream.
+
+Catch errors which at least gcc tolerates by default:
+ warning: 'return' with no value, in function returning non-void [-Wreturn-type]
+
+Signed-off-by: Olaf Hering <olaf@aepfle.de>
+Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Makefile b/Makefile
+index f87c452e7..1b76c2962 100644
+--- a/Makefile
++++ b/Makefile
+@@ -427,7 +427,7 @@ LINUXINCLUDE    := \
+ KBUILD_AFLAGS   := -D__ASSEMBLY__
+ KBUILD_CFLAGS   := -Wall -Wundef -Wno-trigraphs \
+ 		   -fno-strict-aliasing -fno-common -fshort-wchar \
+-		   -Wno-format-security \
++		   -Werror=return-type -Wno-format-security \
+ 		   -std=gnu89 \
+ 		   -Werror-implicit-function-declaration \
+ 		   -Werror \
+-- 
+2.43.0
+

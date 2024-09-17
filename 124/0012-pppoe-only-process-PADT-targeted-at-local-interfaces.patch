@@ -1,0 +1,41 @@
+From 49f218d437b6abb6f58da50f9979de5ed18e0eb6 Mon Sep 17 00:00:00 2001
+From: Guillaume Nault <gnault@redhat.com>
+Date: Thu, 14 May 2020 12:15:39 +0200
+Subject: [PATCH 12/76] pppoe: only process PADT targeted at local interfaces
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+[ Upstream commit b8c158395119be62294da73646a3953c29ac974b ]
+
+We don't want to disconnect a session because of a stray PADT arriving
+while the interface is in promiscuous mode.
+Furthermore, multicast and broadcast packets make no sense here, so
+only PACKET_HOST is accepted.
+
+Reported-by: David Balažic <xerces9@gmail.com>
+Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+Signed-off-by: Guillaume Nault <gnault@redhat.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ drivers/net/ppp/pppoe.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/drivers/net/ppp/pppoe.c b/drivers/net/ppp/pppoe.c
+index c04f3dc17..b8342162f 100644
+--- a/drivers/net/ppp/pppoe.c
++++ b/drivers/net/ppp/pppoe.c
+@@ -497,6 +497,9 @@ static int pppoe_disc_rcv(struct sk_buff *skb, struct net_device *dev,
+ 	if (!skb)
+ 		goto out;
+ 
++	if (skb->pkt_type != PACKET_HOST)
++		goto abort;
++
+ 	if (!pskb_may_pull(skb, sizeof(struct pppoe_hdr)))
+ 		goto abort;
+ 
+-- 
+2.43.0
+

@@ -1,0 +1,43 @@
+From 35da8f1a484ef9143cae421b31173de1e07a3643 Mon Sep 17 00:00:00 2001
+From: Christoph Niedermaier <cniedermaier@dh-electronics.com>
+Date: Tue, 11 Feb 2020 12:58:07 +0100
+Subject: [PATCH 009/143] cpufreq: imx6q: Fixes unwanted cpu overclocking on
+ i.MX6ULL
+
+[ Upstream commit 36eb7dc1bd42fe5f850329c893768ff89b696fba ]
+
+imx6ul_opp_check_speed_grading is called for both i.MX6UL and i.MX6ULL.
+Since the i.MX6ULL was introduced to a separate ocotp compatible node
+later, it is possible that the i.MX6ULL has also dtbs with
+"fsl,imx6ull-ocotp". On a system without nvmem-cell speed grade a
+missing check on this node causes a driver fail without considering
+the cpu speed grade.
+
+This patch prevents unwanted cpu overclocking on i.MX6ULL with compatible
+node "fsl,imx6ull-ocotp" in old dtbs without nvmem-cell speed grade.
+
+Fixes: 2733fb0d0699 ("cpufreq: imx6q: read OCOTP through nvmem for imx6ul/imx6ull")
+Signed-off-by: Christoph Niedermaier <cniedermaier@dh-electronics.com>
+Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/cpufreq/imx6q-cpufreq.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/drivers/cpufreq/imx6q-cpufreq.c b/drivers/cpufreq/imx6q-cpufreq.c
+index d8c3595e9..a0cbbdfc7 100644
+--- a/drivers/cpufreq/imx6q-cpufreq.c
++++ b/drivers/cpufreq/imx6q-cpufreq.c
+@@ -310,6 +310,9 @@ static int imx6ul_opp_check_speed_grading(struct device *dev)
+ 		void __iomem *base;
+ 
+ 		np = of_find_compatible_node(NULL, NULL, "fsl,imx6ul-ocotp");
++		if (!np)
++			np = of_find_compatible_node(NULL, NULL,
++						     "fsl,imx6ull-ocotp");
+ 		if (!np)
+ 			return -ENOENT;
+ 
+-- 
+2.43.0
+

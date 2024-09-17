@@ -1,0 +1,30 @@
+From 764c08d67cb27f3879f35e2b209756658b74698a Mon Sep 17 00:00:00 2001
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Date: Thu, 17 Sep 2020 13:45:31 +0200
+Subject: [PATCH 78/78] Linux 4.19.146
+
+Tested-by: Shuah Khan <skhan@linuxfoundation.org>
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
+Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
+Tested-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Makefile b/Makefile
+index 4d8a7f622..bf1b13f01 100644
+--- a/Makefile
++++ b/Makefile
+@@ -1,7 +1,7 @@
+ # SPDX-License-Identifier: GPL-2.0
+ VERSION = 4
+ PATCHLEVEL = 19
+-SUBLEVEL = 145
++SUBLEVEL = 146
+ EXTRAVERSION =
+ NAME = "People's Front"
+ 
+-- 
+2.43.0
+

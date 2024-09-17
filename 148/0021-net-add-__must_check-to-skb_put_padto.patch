@@ -1,0 +1,45 @@
+From bf9e9e84e3c014dd142922b7a5050628124409b2 Mon Sep 17 00:00:00 2001
+From: Eric Dumazet <edumazet@google.com>
+Date: Wed, 9 Sep 2020 01:27:40 -0700
+Subject: [PATCH 21/36] net: add __must_check to skb_put_padto()
+
+[ Upstream commit 4a009cb04aeca0de60b73f37b102573354214b52 ]
+
+skb_put_padto() and __skb_put_padto() callers
+must check return values or risk use-after-free.
+
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ include/linux/skbuff.h | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
+
+diff --git a/include/linux/skbuff.h b/include/linux/skbuff.h
+index 883072bbc..0104d2ea1 100644
+--- a/include/linux/skbuff.h
++++ b/include/linux/skbuff.h
+@@ -3024,8 +3024,9 @@ static inline int skb_padto(struct sk_buff *skb, unsigned int len)
+  *	is untouched. Otherwise it is extended. Returns zero on
+  *	success. The skb is freed on error if @free_on_error is true.
+  */
+-static inline int __skb_put_padto(struct sk_buff *skb, unsigned int len,
+-				  bool free_on_error)
++static inline int __must_check __skb_put_padto(struct sk_buff *skb,
++					       unsigned int len,
++					       bool free_on_error)
+ {
+ 	unsigned int size = skb->len;
+ 
+@@ -3048,7 +3049,7 @@ static inline int __skb_put_padto(struct sk_buff *skb, unsigned int len,
+  *	is untouched. Otherwise it is extended. Returns zero on
+  *	success. The skb is freed on error.
+  */
+-static inline int skb_put_padto(struct sk_buff *skb, unsigned int len)
++static inline int __must_check skb_put_padto(struct sk_buff *skb, unsigned int len)
+ {
+ 	return __skb_put_padto(skb, len, true);
+ }
+-- 
+2.43.0
+

@@ -1,0 +1,34 @@
+From 2cb953011ed4acc8b0cec8a78831d4a3aa03359c Mon Sep 17 00:00:00 2001
+From: Russell King <rmk+kernel@armlinux.org.uk>
+Date: Wed, 23 Oct 2019 16:46:59 +0100
+Subject: [PATCH 010/240] ASoC: kirkwood: fix IRQ error handling
+
+[ Upstream commit 175fc928198236037174e5c5c066fe3c4691903e ]
+
+Propagate the error code from request_irq(), rather than returning
+-EBUSY.
+
+Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
+Link: https://lore.kernel.org/r/E1iNIqh-0000tW-EZ@rmk-PC.armlinux.org.uk
+Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ sound/soc/kirkwood/kirkwood-dma.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/sound/soc/kirkwood/kirkwood-dma.c b/sound/soc/kirkwood/kirkwood-dma.c
+index c6a58520d..255cc4590 100644
+--- a/sound/soc/kirkwood/kirkwood-dma.c
++++ b/sound/soc/kirkwood/kirkwood-dma.c
+@@ -136,7 +136,7 @@ static int kirkwood_dma_open(struct snd_pcm_substream *substream)
+ 		err = request_irq(priv->irq, kirkwood_dma_irq, IRQF_SHARED,
+ 				  "kirkwood-i2s", priv);
+ 		if (err)
+-			return -EBUSY;
++			return err;
+ 
+ 		/*
+ 		 * Enable Error interrupts. We're only ack'ing them but
+-- 
+2.43.0
+

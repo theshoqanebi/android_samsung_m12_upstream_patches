@@ -1,0 +1,28 @@
+From bac2b9bd63457908c9b391d8dba5b963f9b9977e Mon Sep 17 00:00:00 2001
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Date: Fri, 21 Aug 2020 11:05:39 +0200
+Subject: [PATCH 91/91] Linux 4.19.141
+
+Tested-by: Guenter Roeck <linux@roeck-us.net>
+Tested-by: Shuah Khan <skhan@linuxfoundation.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Makefile b/Makefile
+index a6bf430e8..9f97cd889 100644
+--- a/Makefile
++++ b/Makefile
+@@ -1,7 +1,7 @@
+ # SPDX-License-Identifier: GPL-2.0
+ VERSION = 4
+ PATCHLEVEL = 19
+-SUBLEVEL = 140
++SUBLEVEL = 141
+ EXTRAVERSION =
+ NAME = "People's Front"
+ 
+-- 
+2.43.0
+

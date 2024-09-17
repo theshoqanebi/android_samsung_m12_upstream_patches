@@ -1,0 +1,48 @@
+From 8797eef6058fbe3590c9d3cdc18d0804fe836761 Mon Sep 17 00:00:00 2001
+From: Pablo Neira Ayuso <pablo@netfilter.org>
+Date: Wed, 21 Oct 2020 12:55:52 +0200
+Subject: [PATCH 044/115] netfilter: nf_fwd_netdev: clear timestamp in
+ forwarding path
+
+[ Upstream commit c77761c8a59405cb7aa44188b30fffe13fbdd02d ]
+
+Similar to 7980d2eabde8 ("ipvs: clear skb->tstamp in forwarding path").
+fq qdisc requires tstamp to be cleared in forwarding path.
+
+Fixes: 8203e2d844d3 ("net: clear skb->tstamp in forwarding paths")
+Fixes: fb420d5d91c1 ("tcp/fq: move back to CLOCK_MONOTONIC")
+Fixes: 80b14dee2bea ("net: Add a new socket option for a future transmit time.")
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ net/netfilter/nf_dup_netdev.c  | 1 +
+ net/netfilter/nft_fwd_netdev.c | 1 +
+ 2 files changed, 2 insertions(+)
+
+diff --git a/net/netfilter/nf_dup_netdev.c b/net/netfilter/nf_dup_netdev.c
+index f4a566e67..98d117f33 100644
+--- a/net/netfilter/nf_dup_netdev.c
++++ b/net/netfilter/nf_dup_netdev.c
+@@ -21,6 +21,7 @@ static void nf_do_netdev_egress(struct sk_buff *skb, struct net_device *dev)
+ 		skb_push(skb, skb->mac_len);
+ 
+ 	skb->dev = dev;
++	skb->tstamp = 0;
+ 	dev_queue_xmit(skb);
+ }
+ 
+diff --git a/net/netfilter/nft_fwd_netdev.c b/net/netfilter/nft_fwd_netdev.c
+index 649edbe77..10a12e094 100644
+--- a/net/netfilter/nft_fwd_netdev.c
++++ b/net/netfilter/nft_fwd_netdev.c
+@@ -129,6 +129,7 @@ static void nft_fwd_neigh_eval(const struct nft_expr *expr,
+ 		return;
+ 
+ 	skb->dev = dev;
++	skb->tstamp = 0;
+ 	neigh_xmit(neigh_table, dev, addr, skb);
+ out:
+ 	regs->verdict.code = verdict;
+-- 
+2.43.0
+

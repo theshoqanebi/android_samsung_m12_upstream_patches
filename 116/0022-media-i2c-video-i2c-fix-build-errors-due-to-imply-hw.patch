@@ -1,0 +1,42 @@
+From cea2f690a8a0cb6e8685188df2376d8e0264a4b3 Mon Sep 17 00:00:00 2001
+From: Matt Ranostay <matt.ranostay@konsulko.com>
+Date: Tue, 24 Mar 2020 02:07:41 +0100
+Subject: [PATCH 022/143] media: i2c: video-i2c: fix build errors due to 'imply
+ hwmon'
+
+[ Upstream commit 64d4fc9926f09861a35d8f0f7d81f056e6d5af7b ]
+
+Fix build fault when CONFIG_HWMON is a module, and CONFIG_VIDEO_I2C
+as builtin. This is due to 'imply hwmon' in the respective Kconfig.
+
+Issue build log:
+
+ld: drivers/media/i2c/video-i2c.o: in function `amg88xx_hwmon_init':
+video-i2c.c:(.text+0x2e1): undefined reference to `devm_hwmon_device_register_with_info
+
+Cc: rdunlap@infradead.org
+Fixes: acbea6798955 (media: video-i2c: add hwmon support for amg88xx)
+Signed-off-by: Matt Ranostay <matt.ranostay@konsulko.com>
+Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/media/i2c/video-i2c.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/media/i2c/video-i2c.c b/drivers/media/i2c/video-i2c.c
+index f27d294dc..dd50acc08 100644
+--- a/drivers/media/i2c/video-i2c.c
++++ b/drivers/media/i2c/video-i2c.c
+@@ -105,7 +105,7 @@ static int amg88xx_xfer(struct video_i2c_data *data, char *buf)
+ 	return (ret == 2) ? 0 : -EIO;
+ }
+ 
+-#if IS_ENABLED(CONFIG_HWMON)
++#if IS_REACHABLE(CONFIG_HWMON)
+ 
+ static const u32 amg88xx_temp_config[] = {
+ 	HWMON_T_INPUT,
+-- 
+2.43.0
+

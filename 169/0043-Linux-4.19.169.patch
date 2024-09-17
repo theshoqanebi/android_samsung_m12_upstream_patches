@@ -1,0 +1,31 @@
+From a7604e7464af593e0d661b4cbd3b87f9f12b9d78 Mon Sep 17 00:00:00 2001
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Date: Tue, 19 Jan 2021 18:22:39 +0100
+Subject: [PATCH 43/43] Linux 4.19.169
+
+Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
+Tested-by: Pavel Machek (CIP) <pavel@denx.de>
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
+Tested-by: Guenter Roeck <linux@roeck-us.net>
+Link: https://lore.kernel.org/r/20210118152502.441191888@linuxfoundation.org
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Makefile b/Makefile
+index 1b76c2962..f0581a205 100644
+--- a/Makefile
++++ b/Makefile
+@@ -1,7 +1,7 @@
+ # SPDX-License-Identifier: GPL-2.0
+ VERSION = 4
+ PATCHLEVEL = 19
+-SUBLEVEL = 168
++SUBLEVEL = 169
+ EXTRAVERSION =
+ NAME = "People's Front"
+ 
+-- 
+2.43.0
+

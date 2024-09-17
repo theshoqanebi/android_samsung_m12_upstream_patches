@@ -1,0 +1,43 @@
+From a19612b142ba57ee8cf1f9e9fadcda602562d593 Mon Sep 17 00:00:00 2001
+From: Hans de Goede <hdegoede@redhat.com>
+Date: Wed, 9 Sep 2020 12:32:33 +0200
+Subject: [PATCH 207/240] i2c: core: Call i2c_acpi_install_space_handler()
+ before i2c_acpi_register_devices()
+
+[ Upstream commit 21653a4181ff292480599dad996a2b759ccf050f ]
+
+Some ACPI i2c-devices _STA method (which is used to detect if the device
+is present) use autodetection code which probes which device is present
+over i2c. This requires the I2C ACPI OpRegion handler to be registered
+before we enumerate i2c-clients under the i2c-adapter.
+
+This fixes the i2c touchpad on the Lenovo ThinkBook 14-IIL and
+ThinkBook 15 IIL not getting an i2c-client instantiated and thus not
+working.
+
+BugLink: https://bugzilla.redhat.com/show_bug.cgi?id=1842039
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+Reviewed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+Signed-off-by: Wolfram Sang <wsa@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/i2c/i2c-core-base.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/i2c/i2c-core-base.c b/drivers/i2c/i2c-core-base.c
+index b215fa1e5..717777a6b 100644
+--- a/drivers/i2c/i2c-core-base.c
++++ b/drivers/i2c/i2c-core-base.c
+@@ -1297,8 +1297,8 @@ static int i2c_register_adapter(struct i2c_adapter *adap)
+ 
+ 	/* create pre-declared device nodes */
+ 	of_i2c_register_devices(adap);
+-	i2c_acpi_register_devices(adap);
+ 	i2c_acpi_install_space_handler(adap);
++	i2c_acpi_register_devices(adap);
+ 
+ 	if (adap->nr < __i2c_first_dynamic_bus_num)
+ 		i2c_scan_static_board_info(adap);
+-- 
+2.43.0
+

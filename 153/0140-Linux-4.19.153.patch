@@ -1,0 +1,31 @@
+From c2f6ab1ed62d0aac74e8770b9c5d66d07d75fd01 Mon Sep 17 00:00:00 2001
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Date: Thu, 29 Oct 2020 09:55:18 +0100
+Subject: [PATCH 140/140] Linux 4.19.153
+
+Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
+Tested-by: Pavel Machek (CIP) <pavel@denx.de>
+Tested-by: Guenter Roeck <linux@roeck-us.net>
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
+Link: https://lore.kernel.org/r/20201027135430.632029009@linuxfoundation.org
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Makefile b/Makefile
+index 62b6b9994..8936fd1be 100644
+--- a/Makefile
++++ b/Makefile
+@@ -1,7 +1,7 @@
+ # SPDX-License-Identifier: GPL-2.0
+ VERSION = 4
+ PATCHLEVEL = 19
+-SUBLEVEL = 152
++SUBLEVEL = 153
+ EXTRAVERSION =
+ NAME = "People's Front"
+ 
+-- 
+2.43.0
+

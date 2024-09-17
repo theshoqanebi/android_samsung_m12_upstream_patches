@@ -1,0 +1,37 @@
+From 6c69dd709957b51546e610c4a26f8139b80d0d81 Mon Sep 17 00:00:00 2001
+From: KarimAllah Ahmed <karahmed@amazon.de>
+Date: Wed, 10 Jul 2019 11:13:13 +0200
+Subject: [PATCH 044/128] KVM: Properly check if "page" is valid in
+ kvm_vcpu_unmap
+
+commit b614c6027896ff9ad6757122e84760d938cab15e upstream.
+
+The field "page" is initialized to KVM_UNMAPPED_PAGE when it is not used
+(i.e. when the memory lives outside kernel control). So this check will
+always end up using kunmap even for memremap regions.
+
+Fixes: e45adf665a53 ("KVM: Introduce a new guest mapping API")
+Signed-off-by: KarimAllah Ahmed <karahmed@amazon.de>
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ virt/kvm/kvm_main.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+index 5b949aa27..33b288469 100644
+--- a/virt/kvm/kvm_main.c
++++ b/virt/kvm/kvm_main.c
+@@ -1754,7 +1754,7 @@ void kvm_vcpu_unmap(struct kvm_vcpu *vcpu, struct kvm_host_map *map,
+ 	if (!map->hva)
+ 		return;
+ 
+-	if (map->page)
++	if (map->page != KVM_UNMAPPED_PAGE)
+ 		kunmap(map->page);
+ #ifdef CONFIG_HAS_IOMEM
+ 	else
+-- 
+2.43.0
+

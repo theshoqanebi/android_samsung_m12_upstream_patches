@@ -1,0 +1,52 @@
+From 52b5964f0cbf232b05260f672c089beb83c7ddfa Mon Sep 17 00:00:00 2001
+From: Miklos Szeredi <mszeredi@redhat.com>
+Date: Mon, 15 Oct 2018 15:43:06 +0200
+Subject: [PATCH 25/56] bitops: protect variables in set_mask_bits() macro
+
+commit 18127429a854e7607b859484880b8e26cee9ddab upstream.
+
+Unprotected naming of local variables within the set_mask_bits() can easily
+lead to using the wrong scope.
+
+Noticed this when "set_mask_bits(&foo->bar, 0, mask)" behaved as no-op.
+
+Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+Fixes: 00a1a053ebe5 ("ext4: atomically set inode->i_flags in ext4_set_inode_flags()")
+Cc: Theodore Ts'o <tytso@mit.edu>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ include/linux/bitops.h | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
+
+diff --git a/include/linux/bitops.h b/include/linux/bitops.h
+index 7ac2e4611..e02cbca3c 100644
+--- a/include/linux/bitops.h
++++ b/include/linux/bitops.h
+@@ -236,17 +236,17 @@ static __always_inline void __assign_bit(long nr, volatile unsigned long *addr,
+ #ifdef __KERNEL__
+ 
+ #ifndef set_mask_bits
+-#define set_mask_bits(ptr, _mask, _bits)	\
++#define set_mask_bits(ptr, mask, bits)	\
+ ({								\
+-	const typeof(*ptr) mask = (_mask), bits = (_bits);	\
+-	typeof(*ptr) old, new;					\
++	const typeof(*(ptr)) mask__ = (mask), bits__ = (bits);	\
++	typeof(*(ptr)) old__, new__;				\
+ 								\
+ 	do {							\
+-		old = READ_ONCE(*ptr);			\
+-		new = (old & ~mask) | bits;			\
+-	} while (cmpxchg(ptr, old, new) != old);		\
++		old__ = READ_ONCE(*(ptr));			\
++		new__ = (old__ & ~mask__) | bits__;		\
++	} while (cmpxchg(ptr, old__, new__) != old__);		\
+ 								\
+-	new;							\
++	new__;							\
+ })
+ #endif
+ 
+-- 
+2.43.0
+

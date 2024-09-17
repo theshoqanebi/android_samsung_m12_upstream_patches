@@ -1,0 +1,34 @@
+From 0ad3fbdb85d039f0bdfe49f2190c30ac7a7e7190 Mon Sep 17 00:00:00 2001
+From: Sara Sharon <sara.sharon@intel.com>
+Date: Sun, 29 Nov 2020 17:30:44 +0200
+Subject: [PATCH 239/333] cfg80211: initialize rekey_data
+
+[ Upstream commit f495acd8851d7b345e5f0e521b2645b1e1f928a0 ]
+
+In case we have old supplicant, the akm field is uninitialized.
+
+Signed-off-by: Sara Sharon <sara.sharon@intel.com>
+Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
+Link: https://lore.kernel.org/r/iwlwifi.20201129172929.930f0ab7ebee.Ic546e384efab3f4a89f318eafddc3eb7d556aecb@changeid
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ net/wireless/nl80211.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/net/wireless/nl80211.c b/net/wireless/nl80211.c
+index 151ebc0d4..5d9bf1afa 100644
+--- a/net/wireless/nl80211.c
++++ b/net/wireless/nl80211.c
+@@ -11511,7 +11511,7 @@ static int nl80211_set_rekey_data(struct sk_buff *skb, struct genl_info *info)
+ 	struct net_device *dev = info->user_ptr[1];
+ 	struct wireless_dev *wdev = dev->ieee80211_ptr;
+ 	struct nlattr *tb[NUM_NL80211_REKEY_DATA];
+-	struct cfg80211_gtk_rekey_data rekey_data;
++	struct cfg80211_gtk_rekey_data rekey_data = {};
+ 	int err;
+ 
+ 	if (!info->attrs[NL80211_ATTR_REKEY_DATA])
+-- 
+2.43.0
+

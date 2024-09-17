@@ -1,0 +1,34 @@
+From d8a49a6aeda1f549f245dfa08c549cc86d1b4c80 Mon Sep 17 00:00:00 2001
+From: Dajun Jin <adajunjin@gmail.com>
+Date: Mon, 2 Mar 2020 20:24:21 -0800
+Subject: [PATCH 038/116] drivers/of/of_mdio.c:fix of_mdiobus_register()
+
+[ Upstream commit 209c65b61d94344522c41a83cd6ce51aac5fd0a4 ]
+
+When registers a phy_device successful, should terminate the loop
+or the phy_device would be registered in other addr. If there are
+multiple PHYs without reg properties, it will go wrong.
+
+Signed-off-by: Dajun Jin <adajunjin@gmail.com>
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/of/of_mdio.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/of/of_mdio.c b/drivers/of/of_mdio.c
+index 7d2bc2268..af7572fe0 100644
+--- a/drivers/of/of_mdio.c
++++ b/drivers/of/of_mdio.c
+@@ -270,6 +270,7 @@ int of_mdiobus_register(struct mii_bus *mdio, struct device_node *np)
+ 				rc = of_mdiobus_register_phy(mdio, child, addr);
+ 				if (rc && rc != -ENODEV)
+ 					goto unregister;
++				break;
+ 			}
+ 		}
+ 	}
+-- 
+2.43.0
+

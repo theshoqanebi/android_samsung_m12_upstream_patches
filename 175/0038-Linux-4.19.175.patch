@@ -1,0 +1,34 @@
+From 8c45c01d978b8e424d350510445dfb6e0013ad78 Mon Sep 17 00:00:00 2001
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Date: Wed, 10 Feb 2021 09:21:09 +0100
+Subject: [PATCH 38/38] Linux 4.19.175
+
+Tested-by: Pavel Machek (CIP) <pavel@denx.de>
+Tested-by: Shuah Khan <skhan@linuxfoundation.org>
+Tested-by: Igor Matheus Andrade Torrente <igormtorrente@gmail.com>
+Tested-by: Jason Self <jason@bluehome.net>
+Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
+Tested-by: Guenter Roeck <linux@roeck-us.net>
+Tested-by: Ross Schmidt <ross.schm.dev@gmail.com>
+Link: https://lore.kernel.org/r/20210208145806.141056364@linuxfoundation.org
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Makefile b/Makefile
+index 4c4bbc08b..fe1697f96 100644
+--- a/Makefile
++++ b/Makefile
+@@ -1,7 +1,7 @@
+ # SPDX-License-Identifier: GPL-2.0
+ VERSION = 4
+ PATCHLEVEL = 19
+-SUBLEVEL = 174
++SUBLEVEL = 175
+ EXTRAVERSION =
+ NAME = "People's Front"
+ 
+-- 
+2.43.0
+

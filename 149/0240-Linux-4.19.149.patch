@@ -1,0 +1,30 @@
+From a209ff26d9a6c4c186d04de6d1e26ec5f4b78bc7 Mon Sep 17 00:00:00 2001
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Date: Thu, 1 Oct 2020 13:14:54 +0200
+Subject: [PATCH 240/240] Linux 4.19.149
+
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
+Tested-by: Shuah Khan <skhan@linuxfoundation.org>
+Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
+Link: https://lore.kernel.org/r/20200929142826.951084251@linuxfoundation.org
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Makefile b/Makefile
+index c1b871085..2645fb82f 100644
+--- a/Makefile
++++ b/Makefile
+@@ -1,7 +1,7 @@
+ # SPDX-License-Identifier: GPL-2.0
+ VERSION = 4
+ PATCHLEVEL = 19
+-SUBLEVEL = 148
++SUBLEVEL = 149
+ EXTRAVERSION =
+ NAME = "People's Front"
+ 
+-- 
+2.43.0
+

@@ -1,0 +1,53 @@
+From 5150ff17cd3017a7e9e9c8f2a9003fa23138b2c6 Mon Sep 17 00:00:00 2001
+From: Jernej Skrabec <jernej.skrabec@siol.net>
+Date: Mon, 24 Aug 2020 21:36:49 +0200
+Subject: [PATCH 046/115] ARM: dts: sun8i: r40: bananapi-m2-ultra: Fix dcdc1
+ regulator
+
+[ Upstream commit 3658a2b7f3e16c7053eb8d70657b94bb62c5a0f4 ]
+
+DCDC1 regulator powers many different subsystems. While some of them can
+work at 3.0 V, some of them can not. For example, VCC-HDMI can only work
+between 3.24 V and 3.36 V. According to OS images provided by the board
+manufacturer this regulator should be set to 3.3 V.
+
+Set DCDC1 and DCDC1SW to 3.3 V in order to fix this.
+
+Fixes: da7ac948fa93 ("ARM: dts: sun8i: Add board dts file for Banana Pi M2 Ultra")
+Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+Signed-off-by: Maxime Ripard <maxime@cerno.tech>
+Link: https://lore.kernel.org/r/20200824193649.978197-1-jernej.skrabec@siol.net
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ arch/arm/boot/dts/sun8i-r40-bananapi-m2-ultra.dts | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/arch/arm/boot/dts/sun8i-r40-bananapi-m2-ultra.dts b/arch/arm/boot/dts/sun8i-r40-bananapi-m2-ultra.dts
+index c39b9169e..b2a773a71 100644
+--- a/arch/arm/boot/dts/sun8i-r40-bananapi-m2-ultra.dts
++++ b/arch/arm/boot/dts/sun8i-r40-bananapi-m2-ultra.dts
+@@ -206,16 +206,16 @@
+ };
+ 
+ &reg_dc1sw {
+-	regulator-min-microvolt = <3000000>;
+-	regulator-max-microvolt = <3000000>;
++	regulator-min-microvolt = <3300000>;
++	regulator-max-microvolt = <3300000>;
+ 	regulator-name = "vcc-gmac-phy";
+ };
+ 
+ &reg_dcdc1 {
+ 	regulator-always-on;
+-	regulator-min-microvolt = <3000000>;
+-	regulator-max-microvolt = <3000000>;
+-	regulator-name = "vcc-3v0";
++	regulator-min-microvolt = <3300000>;
++	regulator-max-microvolt = <3300000>;
++	regulator-name = "vcc-3v3";
+ };
+ 
+ &reg_dcdc2 {
+-- 
+2.43.0
+

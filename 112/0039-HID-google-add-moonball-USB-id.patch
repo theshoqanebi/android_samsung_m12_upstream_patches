@@ -1,0 +1,46 @@
+From 3a7198d03e2bfb75958c4a4542c5ce54ad3a828d Mon Sep 17 00:00:00 2001
+From: Chen-Tsung Hsieh <chentsung@chromium.org>
+Date: Mon, 16 Mar 2020 15:24:19 +0800
+Subject: [PATCH 39/42] HID: google: add moonball USB id
+
+commit 58322a1590fc189a8e1e349d309637d4a4942840 upstream.
+
+Add 1 additional hammer-like device.
+
+Signed-off-by: Chen-Tsung Hsieh <chentsung@chromium.org>
+Reviewed-by: Nicolas Boichat <drinkcat@chromium.org>
+Signed-off-by: Jiri Kosina <jkosina@suse.cz>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ drivers/hid/hid-google-hammer.c | 2 ++
+ drivers/hid/hid-ids.h           | 1 +
+ 2 files changed, 3 insertions(+)
+
+diff --git a/drivers/hid/hid-google-hammer.c b/drivers/hid/hid-google-hammer.c
+index 8cb63ea99..fab8fd708 100644
+--- a/drivers/hid/hid-google-hammer.c
++++ b/drivers/hid/hid-google-hammer.c
+@@ -124,6 +124,8 @@ static const struct hid_device_id hammer_devices[] = {
+ 		     USB_VENDOR_ID_GOOGLE, USB_DEVICE_ID_GOOGLE_MAGNEMITE) },
+ 	{ HID_DEVICE(BUS_USB, HID_GROUP_GENERIC,
+ 		     USB_VENDOR_ID_GOOGLE, USB_DEVICE_ID_GOOGLE_MASTERBALL) },
++	{ HID_DEVICE(BUS_USB, HID_GROUP_GENERIC,
++		     USB_VENDOR_ID_GOOGLE, USB_DEVICE_ID_GOOGLE_MOONBALL) },
+ 	{ HID_DEVICE(BUS_USB, HID_GROUP_GENERIC,
+ 		     USB_VENDOR_ID_GOOGLE, USB_DEVICE_ID_GOOGLE_STAFF) },
+ 	{ HID_DEVICE(BUS_USB, HID_GROUP_GENERIC,
+diff --git a/drivers/hid/hid-ids.h b/drivers/hid/hid-ids.h
+index 8aede6902..be44911aa 100644
+--- a/drivers/hid/hid-ids.h
++++ b/drivers/hid/hid-ids.h
+@@ -472,6 +472,7 @@
+ #define USB_DEVICE_ID_GOOGLE_WHISKERS	0x5030
+ #define USB_DEVICE_ID_GOOGLE_MASTERBALL	0x503c
+ #define USB_DEVICE_ID_GOOGLE_MAGNEMITE	0x503d
++#define USB_DEVICE_ID_GOOGLE_MOONBALL	0x5044
+ 
+ #define USB_VENDOR_ID_GOTOP		0x08f2
+ #define USB_DEVICE_ID_SUPER_Q2		0x007f
+-- 
+2.43.0
+

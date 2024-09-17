@@ -1,0 +1,31 @@
+From 5ce5b57d93ad2b58f47489bf6f22056e49596b60 Mon Sep 17 00:00:00 2001
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Date: Thu, 5 Nov 2020 11:08:56 +0100
+Subject: [PATCH 185/185] Linux 4.19.155
+
+Tested-by: Pavel Machek (CIP) <pavel@denx.de>
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
+Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
+Tested-by: Guenter Roeck <linux@roeck-us.net>
+Link: https://lore.kernel.org/r/20201103203232.656475008@linuxfoundation.org
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Makefile b/Makefile
+index 03bd37870..7efa66d81 100644
+--- a/Makefile
++++ b/Makefile
+@@ -1,7 +1,7 @@
+ # SPDX-License-Identifier: GPL-2.0
+ VERSION = 4
+ PATCHLEVEL = 19
+-SUBLEVEL = 154
++SUBLEVEL = 155
+ EXTRAVERSION =
+ NAME = "People's Front"
+ 
+-- 
+2.43.0
+

@@ -1,0 +1,37 @@
+From 32fd193afccc59630a0af1162582042998b645c1 Mon Sep 17 00:00:00 2001
+From: Johan Hovold <johan@kernel.org>
+Date: Sun, 25 Oct 2020 18:45:49 +0100
+Subject: [PATCH 279/333] USB: serial: keyspan_pda: fix stalled writes
+
+commit c01d2c58698f710c9e13ba3e2d296328606f74fd upstream.
+
+Make sure to clear the write-busy flag also in case no new data was
+submitted due to lack of device buffer space so that writing is
+resumed once space again becomes available.
+
+Fixes: 507ca9bc0476 ("[PATCH] USB: add ability for usb-serial drivers to determine if their write urb is currently being used.")
+Cc: stable <stable@vger.kernel.org>     # 2.6.13
+Acked-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Johan Hovold <johan@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ drivers/usb/serial/keyspan_pda.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/usb/serial/keyspan_pda.c b/drivers/usb/serial/keyspan_pda.c
+index 88e835ff7..de16223bf 100644
+--- a/drivers/usb/serial/keyspan_pda.c
++++ b/drivers/usb/serial/keyspan_pda.c
+@@ -548,7 +548,7 @@ static int keyspan_pda_write(struct tty_struct *tty,
+ 
+ 	rc = count;
+ exit:
+-	if (rc < 0)
++	if (rc <= 0)
+ 		set_bit(0, &port->write_urbs_free);
+ 	return rc;
+ }
+-- 
+2.43.0
+

@@ -1,0 +1,51 @@
+From 041b38c10e8dd463c7cbaca511ca50c05d5f81a7 Mon Sep 17 00:00:00 2001
+From: Marc Zyngier <maz@kernel.org>
+Date: Wed, 19 Aug 2020 17:12:17 +0100
+Subject: [PATCH 66/71] epoll: Keep a reference on files added to the check
+ list
+
+commit a9ed4a6560b8562b7e2e2bed9527e88001f7b682 upstream.
+
+When adding a new fd to an epoll, and that this new fd is an
+epoll fd itself, we recursively scan the fds attached to it
+to detect cycles, and add non-epool files to a "check list"
+that gets subsequently parsed.
+
+However, this check list isn't completely safe when deletions
+can happen concurrently. To sidestep the issue, make sure that
+a struct file placed on the check list sees its f_count increased,
+ensuring that a concurrent deletion won't result in the file
+disapearing from under our feet.
+
+Cc: stable@vger.kernel.org
+Signed-off-by: Marc Zyngier <maz@kernel.org>
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+Signed-off-by: Marc Zyngier <maz@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ drivers/firmware/efi/efi.c | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/drivers/firmware/efi/efi.c b/drivers/firmware/efi/efi.c
+index a8180f909..de1bc38ab 100644
+--- a/drivers/firmware/efi/efi.c
++++ b/drivers/firmware/efi/efi.c
+@@ -359,7 +359,6 @@ static int __init efisubsys_init(void)
+ 	efi_kobj = kobject_create_and_add("efi", firmware_kobj);
+ 	if (!efi_kobj) {
+ 		pr_err("efi: Firmware registration failed.\n");
+-		destroy_workqueue(efi_rts_wq);
+ 		return -ENOMEM;
+ 	}
+ 
+@@ -396,7 +395,6 @@ err_unregister:
+ 	generic_ops_unregister();
+ err_put:
+ 	kobject_put(efi_kobj);
+-	destroy_workqueue(efi_rts_wq);
+ 	return error;
+ }
+ 
+-- 
+2.43.0
+

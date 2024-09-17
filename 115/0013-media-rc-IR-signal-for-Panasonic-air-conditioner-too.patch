@@ -1,0 +1,35 @@
+From 3039a199d1e9e20b95e30394f1e23ee78396583e Mon Sep 17 00:00:00 2001
+From: Sean Young <sean@mess.org>
+Date: Thu, 13 Jun 2019 04:49:26 -0400
+Subject: [PATCH 13/56] media: rc: IR signal for Panasonic air conditioner too
+ long
+
+commit 5c4c8b4a999019f19e770cb55cbacb89c95897bd upstream.
+
+The IR signal to control the Panasonic ACXA75C00600 air conditioner has
+439 pulse/spaces. Increase limit to make it possible to transmit signal.
+
+Reported-by: Takashi Kanamaru <neuralassembly@gmail.com>
+Signed-off-by: Sean Young <sean@mess.org>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ drivers/media/rc/lirc_dev.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/media/rc/lirc_dev.c b/drivers/media/rc/lirc_dev.c
+index f862f1b7f..d6f5f5b3f 100644
+--- a/drivers/media/rc/lirc_dev.c
++++ b/drivers/media/rc/lirc_dev.c
+@@ -29,7 +29,7 @@
+ #include "rc-core-priv.h"
+ #include <uapi/linux/lirc.h>
+ 
+-#define LIRCBUF_SIZE	256
++#define LIRCBUF_SIZE	1024
+ 
+ static dev_t lirc_base_dev;
+ 
+-- 
+2.43.0
+

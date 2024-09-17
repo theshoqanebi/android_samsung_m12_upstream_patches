@@ -1,0 +1,38 @@
+From 3b34544b9c95eb1b0954363f7afb5d620741d69f Mon Sep 17 00:00:00 2001
+From: Antony Antony <antony.antony@secunet.com>
+Date: Fri, 4 Sep 2020 08:50:29 +0200
+Subject: [PATCH 32/49] xfrm: clone whole liftime_cur structure in
+ xfrm_do_migrate
+
+[ Upstream commit 8366685b2883e523f91e9816d7be371eb1144749 ]
+
+When we clone state only add_time was cloned. It missed values like
+bytes, packets.  Now clone the all members of the structure.
+
+v1->v3:
+ - use memcpy to copy the entire structure
+
+Fixes: 80c9abaabf42 ("[XFRM]: Extension for dynamic update of endpoint address(es)")
+Signed-off-by: Antony Antony <antony.antony@secunet.com>
+Signed-off-by: Steffen Klassert <steffen.klassert@secunet.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ net/xfrm/xfrm_state.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/net/xfrm/xfrm_state.c b/net/xfrm/xfrm_state.c
+index 4baf3cbd9..aeb03e103 100644
+--- a/net/xfrm/xfrm_state.c
++++ b/net/xfrm/xfrm_state.c
+@@ -1450,7 +1450,7 @@ static struct xfrm_state *xfrm_state_clone(struct xfrm_state *orig,
+ 	x->tfcpad = orig->tfcpad;
+ 	x->replay_maxdiff = orig->replay_maxdiff;
+ 	x->replay_maxage = orig->replay_maxage;
+-	x->curlft.add_time = orig->curlft.add_time;
++	memcpy(&x->curlft, &orig->curlft, sizeof(x->curlft));
+ 	x->km.state = orig->km.state;
+ 	x->km.seq = orig->km.seq;
+ 	x->replay = orig->replay;
+-- 
+2.43.0
+

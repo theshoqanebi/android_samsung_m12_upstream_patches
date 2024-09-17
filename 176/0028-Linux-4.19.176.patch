@@ -1,0 +1,33 @@
+From 1ee11482e17c56cba3f0b024f4234de8f34fe9df Mon Sep 17 00:00:00 2001
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Date: Sat, 13 Feb 2021 13:51:16 +0100
+Subject: [PATCH 28/28] Linux 4.19.176
+
+Tested-by: Jason Self <jason@bluehome.net>
+Tested-by: Shuah Khan <skhan@linuxfoundation.org>
+Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
+Tested-by: Guenter Roeck <linux@roeck-us.net>
+Tested-by: Pavel Machek (CIP) <pavel@denx.de>
+Tested-by: Ross Schmidt <ross.schm.dev@gmail.com>
+Link: https://lore.kernel.org/r/20210212074240.963766197@linuxfoundation.org
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Makefile b/Makefile
+index fe1697f96..8f5b7b775 100644
+--- a/Makefile
++++ b/Makefile
+@@ -1,7 +1,7 @@
+ # SPDX-License-Identifier: GPL-2.0
+ VERSION = 4
+ PATCHLEVEL = 19
+-SUBLEVEL = 175
++SUBLEVEL = 176
+ EXTRAVERSION =
+ NAME = "People's Front"
+ 
+-- 
+2.43.0
+

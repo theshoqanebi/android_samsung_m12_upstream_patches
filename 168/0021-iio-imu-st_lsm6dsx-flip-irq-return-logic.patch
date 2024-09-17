@@ -1,0 +1,34 @@
+From c76812f00a5fade7802a7898bb1d7bc9602aab01 Mon Sep 17 00:00:00 2001
+From: Sean Nyekjaer <sean@geanix.com>
+Date: Mon, 15 Jul 2019 09:07:15 +0200
+Subject: [PATCH 21/44] iio: imu: st_lsm6dsx: flip irq return logic
+
+commit ec76d918f23034f9f662539ca9c64e2ae3ba9fba upstream
+
+No need for using reverse logic in the irq return,
+fix this by flip things around.
+
+Signed-off-by: Sean Nyekjaer <sean@geanix.com>
+Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Signed-off-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_buffer.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_buffer.c b/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_buffer.c
+index 631360b14..8974d7ba6 100644
+--- a/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_buffer.c
++++ b/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_buffer.c
+@@ -481,7 +481,7 @@ static irqreturn_t st_lsm6dsx_handler_thread(int irq, void *private)
+ 	count = st_lsm6dsx_read_fifo(hw);
+ 	mutex_unlock(&hw->fifo_lock);
+ 
+-	return !count ? IRQ_NONE : IRQ_HANDLED;
++	return count ? IRQ_HANDLED : IRQ_NONE;
+ }
+ 
+ static int st_lsm6dsx_buffer_preenable(struct iio_dev *iio_dev)
+-- 
+2.43.0
+

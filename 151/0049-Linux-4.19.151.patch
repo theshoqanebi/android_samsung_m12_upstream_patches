@@ -1,0 +1,32 @@
+From e14508dbac92421cdd4bf47c0c0c7afbf2c6e2fa Mon Sep 17 00:00:00 2001
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Date: Wed, 14 Oct 2020 10:31:27 +0200
+Subject: [PATCH 49/49] Linux 4.19.151
+
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
+Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
+Tested-by: Guenter Roeck <linux@roeck-us.net>
+Tested-by: Pavel Machek (CIP) <pavel@denx.de>
+Tested-by: Shuah Khan <skhan@linuxfoundation.org>
+Link: https://lore.kernel.org/r/20201012132629.469542486@linuxfoundation.org
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Makefile b/Makefile
+index 425d77c27..397570a26 100644
+--- a/Makefile
++++ b/Makefile
+@@ -1,7 +1,7 @@
+ # SPDX-License-Identifier: GPL-2.0
+ VERSION = 4
+ PATCHLEVEL = 19
+-SUBLEVEL = 150
++SUBLEVEL = 151
+ EXTRAVERSION =
+ NAME = "People's Front"
+ 
+-- 
+2.43.0
+

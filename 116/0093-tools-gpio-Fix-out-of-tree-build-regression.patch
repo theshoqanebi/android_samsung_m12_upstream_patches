@@ -1,0 +1,44 @@
+From 738176cee3dddb9e801f3881bd4f0a4889fba8de Mon Sep 17 00:00:00 2001
+From: Anssi Hannula <anssi.hannula@bitwise.fi>
+Date: Wed, 25 Mar 2020 12:31:54 +0200
+Subject: [PATCH 093/143] tools: gpio: Fix out-of-tree build regression
+
+commit 82f04bfe2aff428b063eefd234679b2d693228ed upstream.
+
+Commit 0161a94e2d1c7 ("tools: gpio: Correctly add make dependencies for
+gpio_utils") added a make rule for gpio-utils-in.o but used $(output)
+instead of the correct $(OUTPUT) for the output directory, breaking
+out-of-tree build (O=xx) with the following error:
+
+  No rule to make target 'out/tools/gpio/gpio-utils-in.o', needed by 'out/tools/gpio/lsgpio-in.o'.  Stop.
+
+Fix that.
+
+Fixes: 0161a94e2d1c ("tools: gpio: Correctly add make dependencies for gpio_utils")
+Cc: <stable@vger.kernel.org>
+Cc: Laura Abbott <labbott@redhat.com>
+Signed-off-by: Anssi Hannula <anssi.hannula@bitwise.fi>
+Link: https://lore.kernel.org/r/20200325103154.32235-1-anssi.hannula@bitwise.fi
+Reviewed-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ tools/gpio/Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/tools/gpio/Makefile b/tools/gpio/Makefile
+index 6a73c06e0..3dbf7e8b0 100644
+--- a/tools/gpio/Makefile
++++ b/tools/gpio/Makefile
+@@ -35,7 +35,7 @@ $(OUTPUT)include/linux/gpio.h: ../../include/uapi/linux/gpio.h
+ 
+ prepare: $(OUTPUT)include/linux/gpio.h
+ 
+-GPIO_UTILS_IN := $(output)gpio-utils-in.o
++GPIO_UTILS_IN := $(OUTPUT)gpio-utils-in.o
+ $(GPIO_UTILS_IN): prepare FORCE
+ 	$(Q)$(MAKE) $(build)=gpio-utils
+ 
+-- 
+2.43.0
+

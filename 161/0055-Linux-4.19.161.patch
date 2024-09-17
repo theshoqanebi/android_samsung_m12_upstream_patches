@@ -1,0 +1,31 @@
+From 746bd795034a3581b371ca8fd905d98fc4bb3f40 Mon Sep 17 00:00:00 2001
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Date: Wed, 2 Dec 2020 08:48:14 +0100
+Subject: [PATCH 55/55] Linux 4.19.161
+
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
+Tested-by: Pavel Machek (CIP) <pavel@denx.de>
+Tested-by: Guenter Roeck <linux@roeck-us.net>
+Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
+Link: https://lore.kernel.org/r/20201201084647.751612010@linuxfoundation.org
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Makefile b/Makefile
+index 5862eeb21..284e03af0 100644
+--- a/Makefile
++++ b/Makefile
+@@ -1,7 +1,7 @@
+ # SPDX-License-Identifier: GPL-2.0
+ VERSION = 4
+ PATCHLEVEL = 19
+-SUBLEVEL = 160
++SUBLEVEL = 161
+ EXTRAVERSION =
+ NAME = "People's Front"
+ 
+-- 
+2.43.0
+

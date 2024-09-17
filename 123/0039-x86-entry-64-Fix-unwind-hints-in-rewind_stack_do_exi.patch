@@ -1,0 +1,44 @@
+From fc8d10a68b7e931d474a3d7e28b669c506f95b74 Mon Sep 17 00:00:00 2001
+From: Jann Horn <jannh@google.com>
+Date: Sat, 25 Apr 2020 05:03:04 -0500
+Subject: [PATCH 39/49] x86/entry/64: Fix unwind hints in
+ rewind_stack_do_exit()
+
+commit f977df7b7ca45a4ac4b66d30a8931d0434c394b1 upstream.
+
+The LEAQ instruction in rewind_stack_do_exit() moves the stack pointer
+directly below the pt_regs at the top of the task stack before calling
+do_exit(). Tell the unwinder to expect pt_regs.
+
+Fixes: 8c1f75587a18 ("x86/entry/64: Add unwind hint annotations")
+Reviewed-by: Miroslav Benes <mbenes@suse.cz>
+Signed-off-by: Jann Horn <jannh@google.com>
+Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Dave Jones <dsj@fb.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Vince Weaver <vincent.weaver@maine.edu>
+Link: https://lore.kernel.org/r/68c33e17ae5963854916a46f522624f8e1d264f2.1587808742.git.jpoimboe@redhat.com
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ arch/x86/entry/entry_64.S | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/x86/entry/entry_64.S b/arch/x86/entry/entry_64.S
+index ca651113b..61aed5b52 100644
+--- a/arch/x86/entry/entry_64.S
++++ b/arch/x86/entry/entry_64.S
+@@ -1745,7 +1745,7 @@ ENTRY(rewind_stack_do_exit)
+ 
+ 	movq	PER_CPU_VAR(cpu_current_top_of_stack), %rax
+ 	leaq	-PTREGS_SIZE(%rax), %rsp
+-	UNWIND_HINT_FUNC sp_offset=PTREGS_SIZE
++	UNWIND_HINT_REGS
+ 
+ 	call	do_exit
+ END(rewind_stack_do_exit)
+-- 
+2.43.0
+

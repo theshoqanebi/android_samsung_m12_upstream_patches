@@ -1,0 +1,33 @@
+From 3782d74d4282644ccfd3a49f2ab181cb11c4f59e Mon Sep 17 00:00:00 2001
+From: James Zhu <James.Zhu@amd.com>
+Date: Wed, 18 Mar 2020 17:09:05 -0400
+Subject: [PATCH 09/56] drm/amdgpu: fix typo for vcn1 idle check
+
+[ Upstream commit acfc62dc68770aa665cc606891f6df7d6d1e52c0 ]
+
+fix typo for vcn1 idle check
+
+Signed-off-by: James Zhu <James.Zhu@amd.com>
+Reviewed-by: Leo Liu <leo.liu@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/gpu/drm/amd/amdgpu/vcn_v1_0.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/amd/amdgpu/vcn_v1_0.c b/drivers/gpu/drm/amd/amdgpu/vcn_v1_0.c
+index 4f8f3bb21..a54f8943f 100644
+--- a/drivers/gpu/drm/amd/amdgpu/vcn_v1_0.c
++++ b/drivers/gpu/drm/amd/amdgpu/vcn_v1_0.c
+@@ -857,7 +857,7 @@ static int vcn_v1_0_set_clockgating_state(void *handle,
+ 
+ 	if (enable) {
+ 		/* wait for STATUS to clear */
+-		if (vcn_v1_0_is_idle(handle))
++		if (!vcn_v1_0_is_idle(handle))
+ 			return -EBUSY;
+ 		vcn_v1_0_enable_clock_gating(adev);
+ 	} else {
+-- 
+2.43.0
+

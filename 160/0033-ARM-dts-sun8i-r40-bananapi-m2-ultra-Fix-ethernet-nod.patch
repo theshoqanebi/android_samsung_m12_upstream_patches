@@ -1,0 +1,36 @@
+From 784ce4858ea11a1317b843db4b1a6dce94a64f58 Mon Sep 17 00:00:00 2001
+From: Jernej Skrabec <jernej.skrabec@siol.net>
+Date: Sun, 25 Oct 2020 09:19:49 +0100
+Subject: [PATCH 33/87] ARM: dts: sun8i: r40: bananapi-m2-ultra: Fix ethernet
+ node
+
+[ Upstream commit b3eec3212e66ece33f69be0de98d54e67834e798 ]
+
+Ethernet PHY on BananaPi M2 Ultra provides RX and TX delays. Fix
+ethernet node to reflect that fact.
+
+Fixes: c36fd5a48bd2 ("ARM: dts: sun8i: r40: bananapi-m2-ultra: Enable GMAC ethernet controller")
+Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+Signed-off-by: Maxime Ripard <maxime@cerno.tech>
+Link: https://lore.kernel.org/r/20201025081949.783443-1-jernej.skrabec@siol.net
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ arch/arm/boot/dts/sun8i-r40-bananapi-m2-ultra.dts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/arm/boot/dts/sun8i-r40-bananapi-m2-ultra.dts b/arch/arm/boot/dts/sun8i-r40-bananapi-m2-ultra.dts
+index b2a773a71..5e5223a48 100644
+--- a/arch/arm/boot/dts/sun8i-r40-bananapi-m2-ultra.dts
++++ b/arch/arm/boot/dts/sun8i-r40-bananapi-m2-ultra.dts
+@@ -121,7 +121,7 @@
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&gmac_rgmii_pins>;
+ 	phy-handle = <&phy1>;
+-	phy-mode = "rgmii";
++	phy-mode = "rgmii-id";
+ 	phy-supply = <&reg_dc1sw>;
+ 	status = "okay";
+ };
+-- 
+2.43.0
+
